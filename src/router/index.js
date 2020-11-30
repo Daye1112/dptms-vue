@@ -1,11 +1,22 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Layout from '@/layout'
+// import Layout from '@/layout'
 // import componentsRouter from './modules/components'
 
 Vue.use(Router)
 export const constantRoutes = [
   // componentsRouter,
+  {
+    path: '/login',
+    component: () => import('@/views/login'),
+    hidden: true
+  },
+  {
+    path: '/',
+    redirect: '/login',
+    hidden: true,
+    component: () => import('@/views/login')
+  },
   { path: '*', redirect: '/404', hidden: true }
 ]
 
