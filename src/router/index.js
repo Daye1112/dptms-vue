@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-// import Layout from '@/layout'
+import Main from '@/views/Main'
 // import componentsRouter from './modules/components'
 
 Vue.use(Router)
@@ -13,16 +13,24 @@ export const constantRoutes = [
   },
   {
     path: '/',
-    redirect: '/login',
+    component: Main,
     hidden: true,
-    component: () => import('@/views/login')
+    redirect: '/dashboard',
+    children: [
+      {
+        path: 'dashboard',
+        component: (resolve) => require(['@/views/dashboard/index'], resolve),
+        name: 'Dashboard',
+        meta: {title: 'dashboard', icon: 'dashboard'}
+      }
+    ]
   },
-  { path: '*', redirect: '/404', hidden: true }
+  {path: '*', redirect: '/404', hidden: true}
 ]
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support
-  scrollBehavior: () => ({ y: 0 }),
+  scrollBehavior: () => ({y: 0}),
   routes: constantRoutes
 })
 
