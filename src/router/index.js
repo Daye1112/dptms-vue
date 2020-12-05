@@ -7,22 +7,42 @@ Vue.use(Router)
 export const constantRoutes = [
   // componentsRouter,
   {
+    path: '/',
+    redirect: '/main'
+  },
+  {
     path: '/login',
+    name: 'login',
     component: () => import('@/views/login'),
     hidden: true
   },
   {
-    path: '/',
+    path: '/main',
+    name: 'main',
     component: Main,
+    redirect: '/main/system',
     hidden: true,
-    redirect: '/dashboard',
     children: [
       {
-        path: 'dashboard',
-        component: (resolve) => require(['@/views/dashboard/index'], resolve),
-        name: 'Dashboard',
-        meta: {title: 'dashboard', icon: 'dashboard'}
+        path: 'system',
+        name: 'system',
+        redirect: '/main/system/dashboard',
+        hidden: true,
+        component: (resolve) => require(['@/views/system/Main'], resolve),
+        meta: {
+          menuCode: 'SYSTEM_MANAGE',
+          icon: 'dashboard'
+        },
+        children: [
+          {
+            path: 'dashboard',
+            name: 'dashboard',
+            component: (resolve) => require(['@/views/system/dashboard/dashboard'], resolve),
+            meta: {title: 'dashboard', icon: 'dashboard'}
+          }
+        ]
       }
+
     ]
   },
   {path: '*', redirect: '/404', hidden: true}
