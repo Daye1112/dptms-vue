@@ -82,3 +82,8 @@
 .el-range-separator {
   box-sizing: content-box;
 }
+
+.el-header, .el-footer {
+  padding: 0!important;
+  line-height: 60px;
+}

@@ -26,7 +26,7 @@ module.exports = {
    * In most cases please use '/' !!!
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
-  publicPath: '/dptms-vue',
+  publicPath: '/dptms-web',
   outputDir: 'dist',
   assetsDir: 'static',
   productionSourceMap: false,
@@ -87,11 +87,11 @@ module.exports = {
 
     config
     // https://webpack.js.org/configuration/devtool/#development
-      .when(process.env.NODE_ENV === 'dev', config =>
+      .when(process.env.NODE_ENV === 'development', config =>
         config.devtool('cheap-module-source-map')
       )
 
-    config.when(process.env.NODE_ENV !== 'dev', config => {
+    config.when(process.env.NODE_ENV !== 'development', config => {
       config
         .plugin('ScriptExtHtmlWebpackPlugin')
         .after('html')
