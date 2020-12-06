@@ -2,7 +2,6 @@ import Main from '@/views/Main'
 import systemRouter from './modules/systemRouter'
 
 const componentsRouter = [
-  // componentsRouter,
   {
     path: '/',
     redirect: '/main'
@@ -11,6 +10,12 @@ const componentsRouter = [
     path: '/login',
     name: 'login',
     component: (resolve) => require(['@/views/login'], resolve),
+    hidden: true
+  },
+  {
+    path: '/404',
+    name: 'Page404',
+    component: () => import('@/views/error/404'),
     hidden: true
   },
   {

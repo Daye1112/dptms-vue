@@ -67,6 +67,7 @@
 
 <script>
 
+import { mapActions } from 'vuex'
 export default {
   name: 'Login',
   components: {},
@@ -92,6 +93,9 @@ export default {
   mounted() {
   },
   methods: {
+    ...mapActions({
+      'login': 'user/login'
+    }),
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -105,7 +109,14 @@ export default {
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
-          console.log("login");
+          this.loading = true
+          this.login({ ...this.loginForm})
+            .then(() => {
+              this.loading = false
+              this.$router.push({ path: '/' })
+            }).catch((error) => {
+            this.loading = false
+          })
         }
       })
     }
