@@ -6,8 +6,8 @@
           default-active="1"
           class="left-menu">
           <el-menu-item index="1">
-            <i class="el-icon-menu"></i>
-            <span slot="title">导航一</span>
+            <svg-icon icon-class="user"/>
+            <span slot="title">用户管理</span>
           </el-menu-item>
           <el-menu-item index="2">
             <i class="el-icon-menu"></i>

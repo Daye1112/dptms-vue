@@ -28,7 +28,8 @@ const componentsRouter = [
       {
         path: 'home',
         name: 'home',
-        component: (resolve) => require(['@/views/home'], resolve)
+        component: (resolve) => require(['@/views/home'], resolve),
+        meta: {title: '首页', icon: 'dashboard'}
       },
       systemRouter
     ]
