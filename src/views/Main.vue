@@ -2,7 +2,7 @@
   <el-container class="main">
     <el-header>
       <el-menu
-        :default-active="'1'"
+        :default-active="activerouter"
         width="auto"
         class="top-menu"
         mode="horizontal"
@@ -10,14 +10,20 @@
         background-color="#545c64"
         text-color="#fff"
         active-text-color="#ffd04b">
-        <div class="top-logo">
+        <div class="top-logo" @click="goTo('home')">
           <svg-icon icon-class="monitor" class-name="icon"/>
           <span>DPTMS-项目组管理系统</span>
         </div>
-        <el-menu-item v-for="route in routes[3].children" :index="route.name">
-          <svg-icon :icon-class="route.meta && route.meta.icon"/>
-          {{route.meta && route.meta.title}}
-        </el-menu-item>
+        <template v-if="userRoutes[0].children && userRoutes[0].children.length > 0">
+          <template v-for="item in userRoutes[0].children">
+            <template v-if="!item.hidden">
+              <el-menu-item :index="item.name">
+                <svg-icon :icon-class="item.meta && item.meta.icon"/>
+                {{item.meta && item.meta.title}}
+              </el-menu-item>
+            </template>
+          </template>
+        </template>
       </el-menu>
     </el-header>
     <el-container>
@@ -27,39 +33,46 @@
 </template>
 
 <script>
-  import logo from '@/assets/images/logo.png'
+import {mapGetters} from 'vuex'
+import logo from '@/assets/images/logo.png'
 
-  export default {
-    name: "Main",
-    data() {
-      return {
-        isRouterAlive: true,
-        logoSrc: logo
-      }
+export default {
+  name: "Main",
+  data() {
+    return {
+      isRouterAlive: true,
+      logoSrc: logo,
+      activeRouter: ''
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'userRoutes',
+    ]),
+    key() {
+      return this.$route.path;
+    }
+  },
+  created() {
+    this.activerouter = window.location.hash.split("/")[1];
+    // console.log(this.activerouter);
+  },
+  methods: {
+    handleSelect(key, keyPath) {
+      this.activerouter = key;
+      this.$router.push({name: key});
     },
-    computed: {
-      key() {
-        return this.$route.path
-      },
-      routes() {
-        return this.$router.options.routes
-      }
-    },
-    created() {
-    },
-    methods: {
-      handleSelect(key, keyPath) {
-        this.$router.push({name: key});
-      }
+    goTo(name){
+      this.activerouter = name;
+      this.$router.push({name: name});
     }
   }
+}
 </script>
 
 <style lang="scss" scoped>
   .top-menu {
     display: flex;
-    height: 64px;
-    line-height: 64px;
     padding: 0 24px;
 
     .top-logo {

@@ -1,25 +1,33 @@
 import router from './router'
-import NProgress from 'nprogress' // progress bar
-import 'nprogress/nprogress.css' // progress bar style
-// import { getToken, getRefreshToken } from '@/utils/auth' // get token from cookie
-// import getPageTitle from '@/utils/get-page-title'
+import store from './store'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+import getPageTitle from '@/utils/getPageTitle'
+import {resetRouter} from '@/router'
 
-NProgress.configure({showSpinner: false}) // NProgress Configuration
+NProgress.configure({showSpinner: false})
 
-const whiteList = ['/login'] // no redirect whitelist
+const whiteList = ['/login']
 
 router.beforeEach(async (to, from, next) => {
-  NProgress.start()
+  NProgress.start();
+  document.title = getPageTitle(to.meta.title);
 
-  document.title = getPageTitle(to.meta.title)
-
-  if (whiteList.indexOf(to.path) !== -1) {
-    // in the free login whitelist, go directly
-    next()
+  const userRoutes = store.getters.userRoutes;
+  if (userRoutes && userRoutes.length > 0) {
+    next();
+    return;
   }
+  // 生成路由
+  store.dispatch('permission/generateRoutes', [])
+    .then((mainRoutes) => {
+      // 解决再次登录路由重复添加的问题
+      resetRouter();
+      router.addRoutes(mainRoutes);
+      next({...to, replace: true});
+    });
 })
 
 router.afterEach(() => {
-  // finish progress bar
   NProgress.done()
 })

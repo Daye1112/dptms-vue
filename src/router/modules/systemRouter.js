@@ -1,20 +1,20 @@
 
 const systemRouter = {
-  path: 'system',
+  path: '/system',
   name: 'system',
-  redirect: '/main/system/dashboard',
-  hidden: true,
+  redirect: '/system/dashboard',
   component: (resolve) => require(['@/views/system/Main'], resolve),
   meta: {
     menuCode: 'SYSTEM_MANAGE',
-    icon: 'dashboard'
+    icon: 'system-manage',
+    title: '系统管理'
   },
   children: [
     {
       path: 'dashboard',
       name: 'dashboard',
       component: (resolve) => require(['@/views/system/dashboard'], resolve),
-      meta: {title: 'dashboard', icon: 'dashboard'}
+      meta: {title: '主页', icon: 'dashboard'}
     }
   ]
 }
