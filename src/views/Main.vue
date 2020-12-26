@@ -14,8 +14,8 @@
           <svg-icon icon-class="monitor" class-name="icon"/>
           <span>DPTMS-项目组管理系统</span>
         </div>
-        <template v-if="userRoutes[0].children && userRoutes[0].children.length > 0">
-          <template v-for="item in userRoutes[0].children">
+        <template v-if="mainChildrenRoutes && mainChildrenRoutes.length > 0">
+          <template v-for="item in mainChildrenRoutes">
             <template v-if="!item.hidden">
               <el-menu-item :index="item.name">
                 <svg-icon :icon-class="item.meta && item.meta.icon"/>
@@ -47,20 +47,18 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'userRoutes',
+      'mainChildrenRoutes',
     ]),
     key() {
       return this.$route.path;
     }
   },
   created() {
-    this.activerouter = window.location.hash.split("/")[1];
-    // console.log(this.activerouter);
+    this.activerouter = this.$route.matched[1].name;
   },
   methods: {
     handleSelect(key, keyPath) {
-      this.activerouter = key;
-      this.$router.push({name: key});
+      this.goTo(key);
     },
     goTo(name){
       this.activerouter = name;

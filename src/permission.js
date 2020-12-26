@@ -13,7 +13,7 @@ router.beforeEach(async (to, from, next) => {
   NProgress.start();
   document.title = getPageTitle(to.meta.title);
 
-  const userRoutes = store.getters.userRoutes;
+  const userRoutes = store.getters.mainRoutes;
   if (userRoutes && userRoutes.length > 0) {
     next();
     return;

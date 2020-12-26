@@ -3,6 +3,7 @@ const getters = {
   device: state => state.app.device,
   userInfo: state => state.user.userInfo,
   allRoutes: state => state.permission.allRoutes,
-  userRoutes: state => state.permission.userRoutes,
+  mainRoutes: state => state.permission.mainRoutes,
+  mainChildrenRoutes: state => state.permission.mainChildrenRoutes,
 }
 export default getters

@@ -34,13 +34,15 @@ export function filterAsyncRoutes(node, permissions) {
 
 const state = {
   allRoutes: [],
-  userRoutes: []
+  mainChildrenRoutes: [],
+  mainRoutes: []
 }
 
 const mutations = {
   SET_ROUTES: (state, routes) => {
-    state.userRoutes = routes;
-    state.routes = constantRoutes.concat(routes);
+    state.mainRoutes = routes;
+    state.mainChildrenRoutes = routes[0].children;
+    state.allRoutes = constantRoutes.concat(routes);
   }
 }
 
