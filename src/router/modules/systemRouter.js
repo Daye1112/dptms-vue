@@ -15,6 +15,12 @@ const systemRouter = {
       name: 'dashboard',
       component: (resolve) => require(['@/views/system/dashboard'], resolve),
       meta: {title: '主页', icon: 'dashboard'}
+    },
+    {
+      path: 'permission',
+      name: 'permission',
+      component: (resolve) => require(['@/views/system/permission'], resolve),
+      meta: {title: '权限管理', icon: 'permission'}
     }
   ]
 }

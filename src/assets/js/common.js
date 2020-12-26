@@ -3,7 +3,8 @@ export default {
     Vue.prototype.getSideMenu = function () {
       let sideMenu = [];
       let activeHeaderMenu = this.$route.matched[1].name;
-      for (const item of this.mainChildrenRoutes) {
+      let mainChildrenRoutes = this.$store.getters.mainChildrenRoutes;
+      for (const item of mainChildrenRoutes) {
         if (item.name === activeHeaderMenu) {
           sideMenu = item.children;
           break;

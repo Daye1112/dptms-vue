@@ -3,35 +3,30 @@
     <el-aside class="sidebar-container">
       <el-scrollbar wrap-class="scrollbar-wrapper">
         <el-menu
-          default-active="1"
+          :default-active="activeSideRouter"
+          @select="handleSelect"
           class="left-menu">
-          <el-menu-item index="1">
-            <svg-icon icon-class="user"/>
-            <span slot="title">用户管理</span>
-          </el-menu-item>
-          <el-menu-item index="2">
-            <i class="el-icon-menu"></i>
-            <span slot="title">导航二</span>
-          </el-menu-item>
-          <el-menu-item index="3">
-            <i class="el-icon-document"></i>
-            <span slot="title">导航三</span>
-          </el-menu-item>
-          <el-menu-item index="4">
-            <i class="el-icon-setting"></i>
-            <span slot="title">导航四</span>
-          </el-menu-item>
+          <template v-for="item in sideRouter">
+            <template v-if="!item.hidden">
+              <el-menu-item :index="item.name">
+                <svg-icon :icon-class="item.meta && item.meta.icon"/>
+                {{item.meta && item.meta.title}}
+              </el-menu-item>
+            </template>
+          </template>
         </el-menu>
       </el-scrollbar>
     </el-aside>
     <el-container>
       <el-main class="main-container">
-        <keep-alive :include="keepAliveList">
-          <router-view/>
-        </keep-alive>
+        <div class="main-content">
+          <keep-alive :include="keepAliveList">
+            <router-view/>
+          </keep-alive>
+        </div>
       </el-main>
       <el-footer class="footer">
-        <small>Footer</small>
+        <small>Copyright &copy; 2020-{{new Date().getFullYear()}} DPTMS-项目组管理系统</small>
       </el-footer>
     </el-container>
   </el-container>
@@ -40,7 +35,26 @@
 <script>
 export default {
   name: "SideLeftMenu",
-  props: ['keepAliveList']
+  props: ['keepAliveList'],
+  data() {
+    return {
+      sideRouter: [],
+      activeSideRouter: ''
+    }
+  },
+  created() {
+    this.sideRouter = this.getSideMenu();
+    this.activeSideRouter = this.$route.matched[2].name;
+  },
+  methods: {
+    handleSelect(key, keyPath) {
+      this.goTo(key);
+    },
+    goTo(name) {
+      this.activeSideRouter = name;
+      this.$router.push({name: name});
+    }
+  }
 }
 </script>
 
