@@ -84,10 +84,11 @@ const request = {
       _params = '?'
       for (const key in params) {
         // eslint-disable-next-line no-prototype-builtins
-        if (params.hasOwnProperty(key) && params[key] !== null) {
+        if (params.hasOwnProperty(key) && params[key] !== null && params[key] !== '') {
           _params += `${key}=${params[key]}&`
         }
       }
+      _params = _params.substring(0, _params.length - 1);
     }
     return service.get(`${url}${_params}`)
   }

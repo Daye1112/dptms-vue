@@ -122,6 +122,12 @@ aside {
 //main-container全局样式
 .app-container {
   padding: 20px;
+
+  .filter-container {
+    .el-input {
+      width: 200px;
+    }
+  }
 }
 
 .components-container {

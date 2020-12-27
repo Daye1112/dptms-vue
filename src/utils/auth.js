@@ -1,24 +1,24 @@
 import Cookies from 'js-cookie'
 
-const TokenKey = 'DptmsAccessToken'
-const RefreshTokenKey = 'DptmsRefreshToken'
+const tokenKey = 'DptmsAccessToken'
+const refreshTokenKey = 'DptmsRefreshToken'
 
 export function getToken() {
-  return Cookies.get(TokenKey)
+  return Cookies.get(tokenKey)
 }
 
 export function removeToken() {
-  return Cookies.remove(TokenKey)
+  return Cookies.remove(tokenKey)
 }
 
 export function getRefreshToken() {
-  return Cookies.get(RefreshTokenKey)
+  return Cookies.get(refreshTokenKey)
 }
 
 export function removeRefreshToken() {
-  return Cookies.remove(RefreshTokenKey)
+  return Cookies.remove(refreshTokenKey)
 }
 
-export function removeVuex() {
-  return window.sessionStorage.removeItem('vuex')
-}
+// export function removeVuex() {
+//   return window.sessionStorage.removeItem('vuex')
+// }

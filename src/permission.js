@@ -4,6 +4,7 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import getPageTitle from '@/utils/getPageTitle'
 import {resetRouter} from '@/router'
+import {getRefreshToken, getToken} from '@/utils/auth'
 
 NProgress.configure({showSpinner: false})
 
@@ -13,19 +14,47 @@ router.beforeEach(async (to, from, next) => {
   NProgress.start();
   document.title = getPageTitle(to.meta.title);
 
-  const userRoutes = store.getters.mainRoutes;
-  if (userRoutes && userRoutes.length > 0) {
-    next();
-    return;
+  const hasToken = getToken() && getRefreshToken();
+  if (hasToken) {
+    // 登录成功
+    if (to.path === '/login') {
+      next({path: '/'})
+      NProgress.done()
+    } else {
+      // 获取用户信息(权限)
+      // const permission = store.getters.permission
+      // const hasPermission = permission && permission.length > 0
+      const mainRoutes = store.getters.mainRoutes;
+      const hasPermission = mainRoutes && mainRoutes.length > 0
+      if (hasPermission) {
+        next();
+      } else {
+        // 没有权限（第一次登陆 or 刷新）
+        try {
+          // 获取用户信息
+          // 生成路由
+          store.dispatch('permission/generateRoutes', [])
+            .then((mainRoutes) => {
+              // 解决再次登录路由重复添加的问题
+              resetRouter();
+              router.addRoutes(mainRoutes);
+              next({...to, replace: true});
+            });
+        } catch (error) {
+          // 失败，说明有错
+        }
+      }
+    }
+  } else {
+    // 没有token，判断是否是白名单路由
+    if (whiteList.indexOf(to.path) !== -1) {
+      next()
+    } else {
+      // 不是，跳转到登录页
+      next('/login')
+      NProgress.done()
+    }
   }
-  // 生成路由
-  store.dispatch('permission/generateRoutes', [])
-    .then((mainRoutes) => {
-      // 解决再次登录路由重复添加的问题
-      resetRouter();
-      router.addRoutes(mainRoutes);
-      next({...to, replace: true});
-    });
 })
 
 router.afterEach(() => {

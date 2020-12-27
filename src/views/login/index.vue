@@ -14,7 +14,7 @@
         <el-input
           ref="username"
           v-model="loginForm.username"
-          placeholder="用户名"
+          placeholder="账号"
           name="username"
           type="text"
           tabindex="1"
@@ -88,7 +88,6 @@ export default {
   },
   watch: {},
   created() {
-    // window.addEventListener('storage', this.afterQRScan)
   },
   mounted() {
   },
