@@ -1,12 +1,12 @@
 <template>
   <div>
-    主页
+    角色管理
   </div>
 </template>
 
 <script>
 export default {
-  name: "Dashboard"
+  name: "Role"
 }
 </script>
 

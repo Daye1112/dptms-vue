@@ -67,7 +67,7 @@
           <el-button round size="mini" type="primary" @click="handleUpdate(row)">
             修改
           </el-button>
-          <el-button round size="mini" type="danger" @click="handleDelete(row,$index)">
+          <el-button round size="mini" type="danger" @click="handleDelete(row)">
             删除
           </el-button>
         </template>
