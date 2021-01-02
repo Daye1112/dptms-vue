@@ -43,7 +43,7 @@
       </el-table-column>
       <el-table-column label="性别" prop="gender" min-width="50" align="center">
         <template slot-scope="{row}">
-          <span>{{genderMap[row.gender] || '--'}}</span>
+          <span>{{row.gender === 1 ? "男" : (row.gender === 2 ? "女" : "--")}}</span>
         </template>
       </el-table-column>
       <el-table-column label="联系电话" prop="phoneNumber" min-width="120" align="center">
@@ -88,6 +88,48 @@
       class="fr"
       @pagination="setPagination"
     />
+    <el-dialog
+      v-el-drag-dialog
+      :title="textMap[dialogStatus]"
+      :visible.sync="dialogFormVisible"
+      width="40%"
+    >
+      <el-form
+        ref="dataForm"
+        :rules="rules"
+        :model="temp"
+        size="small"
+        label-position="left"
+        label-width="70px"
+      >
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="temp.username"/>
+        </el-form-item>
+        <el-form-item label="姓名" prop="realName">
+          <el-input v-model="temp.realName"/>
+        </el-form-item>
+        <el-form-item label="性别" prop="gender">
+          <el-select v-model="temp.gender">
+            <el-option key="" label="请选择" value=""/>
+            <el-option v-for="item in genderMap" :key="item.key" :label="item.value" :value="item.key"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="联系电话" prop="phoneNumber">
+          <el-input v-model="temp.phoneNumber"/>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="temp.email"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button round size="medium" @click="dialogFormVisible = false">
+          取消
+        </el-button>
+        <el-button round size="medium" type="primary" @click="dialogStatus === 'create'? add() : update()">
+          确定
+        </el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -109,11 +151,16 @@ export default {
         username: '',
         realName: ''
       },
-      genderMap: {
-        "": null,
-        1: "男",
-        2: "女"
-      },
+      genderMap: [
+        {
+          "key": 1,
+          "value": "男"
+        },
+        {
+          "key": 2,
+          "value": "女"
+        }
+      ],
       list: [],
       total: 0,
       listLoading: false,
@@ -128,15 +175,11 @@ export default {
         realName: '',
         gender: '',
         phoneNumber: '',
-        email: '',
-        isLocked: ''
+        email: ''
       },
       dialogFormVisible: false,
       rules: {
-        perGroup: [{required: true, message: '请输入权限组', trigger: ['blur', 'change']}],
-        perName: [{required: true, message: '请输入权限名', trigger: 'blur'}],
-        perCode: [{required: true, message: '请输入权限码', trigger: 'blur'}],
-        perUrl: [{required: true, message: '请输入权限url', trigger: 'blur'}]
+        username: [{required: true, message: '请输入用户名', trigger: 'blur'}]
       }
     }
   },
@@ -155,18 +198,75 @@ export default {
         });
     },
     handleUpdate(row) {
+      this.temp = Object.assign({}, row);
+      this.dialogStatus = 'update';
+      this.dialogFormVisible = true;
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate();
+      });
     },
     update() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          request.post("/system-manage/sys/user/update", this.temp)
+            .then(response => {
+              this.$message({
+                type: 'success',
+                message: '用户更新成功'
+              });
+              this.listPage();
+              this.dialogFormVisible = false;
+            })
+        }
+      })
     },
     handleAdd() {
-
+      let _this = this;
+      Object.getOwnPropertyNames(this.temp).forEach(function (key) {
+        _this.temp[key] = '';
+      });
+      this.dialogStatus = 'create'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
     },
     add() {
-
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          request.post("/system-manage/sys/user/insert", this.temp)
+            .then(response => {
+              this.$message({
+                type: 'success',
+                message: '用户添加成功'
+              })
+              this.listPage();
+              this.dialogFormVisible = false
+            })
+        }
+      })
     },
     handleDelete(row) {
+      this.$confirm('确定永久删除该用户, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 发送请求
+        request.get("/system-manage/sys/user/deleteById", {id: row.id})
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            this.listPage();
+          })
+      }).catch(() => {
+
+      })
     },
     setPagination() {
+      this.listPage();
     },
     handleFilter() {
       this.listQuery.currentPage = 1;
