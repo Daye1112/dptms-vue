@@ -5,5 +5,6 @@ const getters = {
   allRoutes: state => state.permission.allRoutes,
   mainRoutes: state => state.permission.mainRoutes,
   mainChildrenRoutes: state => state.permission.mainChildrenRoutes,
+  orgId: state => state.organization.orgId
 }
 export default getters

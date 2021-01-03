@@ -56,14 +56,19 @@
           <span>{{row.email || '--'}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="上次登录时间" prop="lastLoginTime" min-width="150" align="center">
+      <el-table-column label="上次登录时间" prop="lastLoginTime" min-width="130" align="center">
         <template slot-scope="{row}">
           <span>{{row.lastLoginTime || '--'}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="密码更新时间" prop="pwdUpdateTime" min-width="150" align="center">
+      <el-table-column label="密码更新时间" prop="pwdUpdateTime" min-width="130" align="center">
         <template slot-scope="{row}">
           <span>{{row.pwdUpdateTime || '--'}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="更新时间" prop="mtime" min-width="130" align="center">
+        <template slot-scope="{row}">
+          <span>{{row.mtime}}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">

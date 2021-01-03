@@ -42,24 +42,29 @@
         align="center"
         width="50"
       />
-      <el-table-column label="权限名称" prop="perName" min-width="120" align="center">
+      <el-table-column label="权限名称" prop="perName" min-width="100" align="center">
         <template slot-scope="{row}">
           <span>{{row.perName}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="权限码" prop="perCode" min-width="120" align="center">
+      <el-table-column label="权限码" prop="perCode" min-width="100" align="center">
         <template slot-scope="{row}">
           <span>{{row.perCode}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="权限组" prop="perGroup" min-width="120" align="center">
+      <el-table-column label="权限组" prop="perGroup" min-width="80" align="center">
         <template slot-scope="{row}">
           <span>{{row.perGroup}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="权限url" prop="perUrl" min-width="120" align="center">
+      <el-table-column label="权限url" prop="perUrl" min-width="150" align="center">
         <template slot-scope="{row}">
           <span>{{row.perUrl}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="更新时间" prop="mtime" min-width="130" align="center">
+        <template slot-scope="{row}">
+          <span>{{row.mtime}}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="140" class-name="small-padding fixed-width">

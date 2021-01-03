@@ -6,6 +6,7 @@ import settings from './modules/settings'
 import tagsView from './modules/tagsView'
 import user from './modules/user'
 import permission from './modules/permission'
+import organization from './modules/organization'
 import VuexPersistence from 'vuex-persist' // 持久化存储
 
 Vue.use(Vuex)
@@ -19,7 +20,8 @@ const store = new Vuex.Store({
     settings,
     tagsView,
     user,
-    permission
+    permission,
+    organization
   },
   getters,
   plugins: [vuexLocal.plugin]
