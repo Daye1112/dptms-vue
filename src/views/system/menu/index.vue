@@ -27,8 +27,8 @@
             删除
           </el-button>
           <el-button round size="small" class="filter-item"
-                     type="primary" icon="el-icon-setting" @click="assignedPer">
-            关联权限
+                     type="primary" icon="el-icon-setting" @click="handleAssignedPer">
+            分配权限
           </el-button>
         </div>
         <el-table
@@ -74,6 +74,15 @@
         </el-table>
       </el-col>
     </el-row>
+    <pop-transfer
+      v-model="choosePermissionList"
+      v-el-drag-dialog
+      pop-title="分配权限"
+      :list-titles="['权限池', '已分配']"
+      :data="allPermissionList"
+      :visible="visible"
+      :on-close="close"
+      :on-submit="assignedPer"/>
   </div>
 </template>
 
@@ -82,10 +91,11 @@ import request from '@/utils/request'
 import Pagination from '@/components/Pagination'
 import elDragDialog from '@/directive/el-drag-dialog'
 import waves from '@/directive/waves'
+import PopTransfer from '@/components/PopTransfer'
 
 export default {
   name: "Menu",
-  components: {Pagination},
+  components: {Pagination, PopTransfer},
   directives: {waves, elDragDialog},
   data() {
     return {
@@ -96,7 +106,10 @@ export default {
       },
       listLoading: false,
       permissionList: [],
-      menuId: ''
+      menuId: '',
+      choosePermissionList: [],
+      allPermissionList: [],
+      visible: false
     }
   },
   created() {
@@ -135,9 +148,50 @@ export default {
     handleDelete() {
 
     },
+    handleAssignedPer() {
+      this.allPermissionList = [];
+      this.choosePermissionList = [];
+      if (!this.menuId) {
+        this.$message({
+          type: 'warning',
+          message: '请选择菜单节点'
+        })
+        return;
+      }
+      request.get("/system-manage/sys/permission/listMenuAssigned", {"menuId": this.menuId})
+        .then(response => {
+          response.data.forEach(item => {
+            this.allPermissionList.push({
+              key: item.id,
+              label: item.perName
+            });
+            if (item.isAssigned) {
+              this.choosePermissionList.push(item.id);
+            }
+          });
+          this.visible = true;
+        });
+    },
+    close() {
+      this.visible = false;
+    },
     assignedPer() {
-
-    }
+      console.log(this.choosePermissionList);
+      const perIds = this.choosePermissionList.join(',')
+      const param = {
+        menuId: this.menuId,
+        perIds: perIds
+      }
+      request.post("/system-manage/sys/menu/assignedPer", param)
+        .then(response => {
+          this.$message({
+            type: 'success',
+            message: '权限分配成功'
+          })
+          this.listByMenuId();
+          this.visible = false;
+        });
+    },
   }
 }
 </script>
@@ -158,9 +212,9 @@ export default {
         }
 
         h3 {
-          margin: 5px 0;
+          margin: 10px 0;
           border-left: 5px solid #43cbe3;
-          padding-left: 5px;
+          padding-left: 10px;
         }
       }
 
