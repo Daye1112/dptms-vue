@@ -198,6 +198,9 @@ export default {
             if (!this.menuNode) {
               this.menuNode = data;
             }
+            if(this.openMenuIds.length === 0){
+              this.openMenuIds.push(data.id);
+            }
             this.listByMenuId();
           }
         });
