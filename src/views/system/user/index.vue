@@ -79,7 +79,7 @@
           <el-button round size="mini" type="danger" @click="handleDelete(row)">
             删除
           </el-button>
-          <el-button round size="mini" :type="row.isLocked === 0 ? 'danger' : 'primary'" @click="handleDelete(row)">
+          <el-button round size="mini" :type="row.isLocked === 0 ? 'danger' : 'primary'" @click="handleLock(row)">
             {{row.isLocked === 0 ? "锁定":"解锁"}}
           </el-button>
         </template>
@@ -277,6 +277,9 @@ export default {
       this.listQuery.currentPage = 1;
       this.listPage();
     },
+    handleLock(row) {
+
+    }
   }
 }
 </script>

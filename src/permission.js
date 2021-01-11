@@ -1,5 +1,6 @@
 import router from './router'
 import store from './store'
+import { Message } from 'element-ui'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import getPageTitle from '@/utils/getPageTitle'
@@ -18,14 +19,15 @@ router.beforeEach(async (to, from, next) => {
   if (hasToken) {
     // 登录成功
     if (to.path === '/login') {
-      next({path: '/'})
-      NProgress.done()
+      // next({path: '/'});
+      next();
+      NProgress.done();
     } else {
       // 获取用户信息(权限)
       // const permission = store.getters.permission
       // const hasPermission = permission && permission.length > 0
       const mainRoutes = store.getters.mainRoutes;
-      const hasPermission = mainRoutes && mainRoutes.length > 0
+      const hasPermission = mainRoutes && mainRoutes.length > 0;
       if (hasPermission) {
         next();
       } else {
@@ -42,17 +44,20 @@ router.beforeEach(async (to, from, next) => {
             });
         } catch (error) {
           // 失败，说明有错
+          Message.error(error);
+          next(`/login?redirect=${to.path}`);
+          NProgress.done();
         }
       }
     }
   } else {
     // 没有token，判断是否是白名单路由
     if (whiteList.indexOf(to.path) !== -1) {
-      next()
+      next();
     } else {
       // 不是，跳转到登录页
-      next('/login')
-      NProgress.done()
+      next('/login');
+      NProgress.done();
     }
   }
 })

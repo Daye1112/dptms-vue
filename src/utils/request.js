@@ -53,10 +53,10 @@ service.interceptors.response.use(
         case 403:
           router.push('/')
           Message.error(message || '权限不足')
-          break
+          break;
         case 500:
           Message.error(message || '服务异常')
-          break
+          break;
       }
     } else {
       Message.error('服务访问异常')
