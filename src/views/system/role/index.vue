@@ -51,10 +51,13 @@
           <span>{{row.mtime}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="220" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button round size="mini" type="primary" @click="handleUpdate(row)">
             修改
+          </el-button>
+          <el-button round size="mini" type="primary" @click="handleAssignedMenu(row)">
+            分配菜单
           </el-button>
           <el-button round size="mini" type="danger" @click="handleDelete(row)">
             删除
@@ -99,6 +102,32 @@
           取消
         </el-button>
         <el-button round size="medium" type="primary" @click="dialogStatus === 'create'? add() : update()">
+          确定
+        </el-button>
+      </div>
+    </el-dialog>
+    <el-dialog
+      v-el-drag-dialog
+      title="分配菜单"
+      :visible.sync="dialogMenuVisible"
+      width="35%"
+    >
+      <div class="menu-tree">
+        <el-scrollbar wrap-class="scrollbar-wrapper">
+          <el-tree
+            show-checkbox
+            :highlight-current="true"
+            ref="menuTree"
+            :data="menuTree"
+            node-key="id"
+            :props="defaultProps"/>
+        </el-scrollbar>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button round size="medium" @click="dialogMenuVisible = false">
+          取消
+        </el-button>
+        <el-button round size="medium" type="primary" @click="assignedMenu">
           确定
         </el-button>
       </div>
@@ -151,6 +180,16 @@ export default {
         roleCode: '',
         isAdmin: false,
         orgId: ''
+      },
+      defaultProps: {
+        children: 'children',
+        label: 'menuName'
+      },
+      menuTree: [],
+      dialogMenuVisible: false,
+      assignTemp: {
+        roleId: '',
+        menuIds: ''
       }
     }
   },
@@ -173,7 +212,7 @@ export default {
       this.listQuery.currentPage = 1;
       this.listPage();
     },
-    initHandleParam(){
+    initHandleParam() {
       let _this = this;
       Object.getOwnPropertyNames(this.temp).forEach(function (key) {
         _this.temp[key] = '';
@@ -249,10 +288,40 @@ export default {
     setPagination() {
       this.listPage();
     },
+    handleAssignedMenu(row) {
+      this.assignTemp.roleId = row.id;
+      this.menuTree = [];
+      request.get("/system-manage/sys/menu/listRoleAssigned", this.assignTemp)
+        .then(response => {
+          let data = response.data;
+          this.menuTree.push(data);
+          this.$nextTick(() => {
+            this.$refs.menuTree.setCheckedKeys(data.assignedIdList);
+          });
+          this.dialogMenuVisible = true;
+        });
+    },
+    assignedMenu() {
+      this.assignTemp.menuIds = this.$refs.menuTree.getCheckedKeys().join(",");
+      request.get("/system-manage/sys/role/assignedMenu", this.assignTemp)
+        .then(response => {
+          this.$message({
+            type: 'success',
+            message: '权限菜单成功'
+          })
+          this.dialogMenuVisible = false;
+        });
+    }
   }
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+  .menu-tree {
+    height: 300px;
 
+    .el-scrollbar {
+      height: 100%;
+    }
+  }
 </style>
