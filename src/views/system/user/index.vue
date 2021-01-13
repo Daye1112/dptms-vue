@@ -56,12 +56,12 @@
           <span>{{row.email || '--'}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="上次登录时间" prop="lastLoginTime" min-width="130" align="center">
+      <el-table-column label="上次登录" prop="lastLoginTime" min-width="130" align="center">
         <template slot-scope="{row}">
           <span>{{row.lastLoginTime || '--'}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="密码更新时间" prop="pwdUpdateTime" min-width="130" align="center">
+      <el-table-column label="密码更新" prop="pwdUpdateTime" min-width="130" align="center">
         <template slot-scope="{row}">
           <span>{{row.pwdUpdateTime || '--'}}</span>
         </template>
@@ -71,8 +71,14 @@
           <span>{{row.mtime}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" min-width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
+          <el-button round size="mini" type="primary" @click="handleAssignedRole(row)">
+            分配角色
+          </el-button>
+          <el-button round size="mini" type="primary" @click="handleAssignedOrg(row)">
+            分配组织
+          </el-button>
           <el-button round size="mini" type="primary" @click="handleUpdate(row)">
             修改
           </el-button>
@@ -135,6 +141,24 @@
         </el-button>
       </div>
     </el-dialog>
+    <pop-transfer
+      v-model="chooseRoleList"
+      v-el-drag-dialog
+      pop-title="分配角色"
+      :list-titles="['角色池', '已分配']"
+      :data="allRoleList"
+      :visible="rolePopVisible"
+      :on-close="rolePopClose"
+      :on-submit="assignedRole"/>
+    <pop-transfer
+      v-model="chooseOrgList"
+      v-el-drag-dialog
+      pop-title="分配组织"
+      :list-titles="['组织池', '已分配']"
+      :data="allOrgList"
+      :visible="orgPopVisible"
+      :on-close="orgPopClose"
+      :on-submit="assignedOrg"/>
   </div>
 </template>
 
@@ -143,10 +167,11 @@ import request from '@/utils/request'
 import Pagination from '@/components/Pagination'
 import elDragDialog from '@/directive/el-drag-dialog'
 import waves from '@/directive/waves'
+import PopTransfer from '@/components/PopTransfer'
 
 export default {
   name: "User",
-  components: {Pagination},
+  components: {Pagination, PopTransfer},
   directives: {waves, elDragDialog},
   data() {
     return {
@@ -185,7 +210,21 @@ export default {
       dialogFormVisible: false,
       rules: {
         username: [{required: true, message: '请输入用户名', trigger: 'blur'}]
-      }
+      },
+      chooseRoleList: [],
+      allRoleList: [],
+      rolePopVisible: false,
+      roleAssignTemp: {
+        userId: '',
+        roleIds: ''
+      },
+      chooseOrgList: [],
+      allOrgList: [],
+      orgPopVisible: false,
+      orgAssignTemp: {
+        userId: '',
+        orgIds: ''
+      },
     }
   },
   created() {
@@ -278,7 +317,89 @@ export default {
       this.listPage();
     },
     handleLock(row) {
+      let msg = row.isLocked === 0 ? "锁定" : "解锁";
+      let realIsLocked = row.isLocked === 0 ? 1 : 0;
+      this.$confirm('确定' + msg + '该用户, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 发送请求
+        request.get("/system-manage/sys/user/updateLock", {id: row.id, isLocked: realIsLocked})
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: msg + '成功!'
+            })
+            this.listPage();
+          })
+      }).catch(() => {
 
+      })
+    },
+    handleAssignedRole(row) {
+      this.chooseRoleList = [];
+      this.allRoleList = [];
+      this.roleAssignTemp.userId = row.id;
+      request.get("/system-manage/sys/role/listUserAssigned", this.roleAssignTemp)
+        .then(response => {
+          response.data.forEach(item => {
+            this.allRoleList.push({
+              key: item.id,
+              label: item.roleName
+            });
+            if (item.isAssigned) {
+              this.chooseRoleList.push(item.id);
+            }
+          });
+          this.rolePopVisible = true;
+        });
+    },
+    assignedRole() {
+      this.roleAssignTemp.roleIds = this.chooseRoleList.join(",");
+      request.get("/system-manage/sys/user/assignedRole", this.roleAssignTemp)
+        .then(response => {
+          this.$message({
+            type: 'success',
+            message: '分配角色成功'
+          })
+          this.rolePopVisible = false;
+        });
+    },
+    handleAssignedOrg(row) {
+      this.chooseOrgList = [];
+      this.allOrgList = [];
+      this.orgAssignTemp.userId = row.id;
+      request.get("/system-manage/sys/organization/listUserAssigned", this.orgAssignTemp)
+        .then(response => {
+          response.data.forEach(item => {
+            this.allOrgList.push({
+              key: item.id,
+              label: item.orgName
+            });
+            if (item.isAssigned) {
+              this.chooseOrgList.push(item.id);
+            }
+          });
+          this.orgPopVisible = true;
+        });
+    },
+    assignedOrg() {
+      this.orgAssignTemp.orgIds = this.chooseOrgList.join(",");
+      request.get("/system-manage/sys/user/assignedOrg", this.orgAssignTemp)
+        .then(response => {
+          this.$message({
+            type: 'success',
+            message: '分配组织成功'
+          })
+          this.orgPopVisible = false;
+        });
+    },
+    rolePopClose() {
+      this.rolePopVisible = false;
+    },
+    orgPopClose() {
+      this.orgPopVisible = false;
     }
   }
 }

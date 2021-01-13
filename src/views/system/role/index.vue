@@ -117,6 +117,7 @@
           <el-tree
             show-checkbox
             :highlight-current="true"
+            :default-expanded-keys="openMenuIds"
             ref="menuTree"
             :data="menuTree"
             node-key="id"
@@ -157,8 +158,7 @@ export default {
         currentPage: 1,
         pageSize: 10,
         roleName: '',
-        roleCode: '',
-        orgId: ''
+        roleCode: ''
       },
       list: [],
       total: 0,
@@ -178,14 +178,14 @@ export default {
         id: '',
         roleName: '',
         roleCode: '',
-        isAdmin: false,
-        orgId: ''
+        isAdmin: false
       },
       defaultProps: {
         children: 'children',
         label: 'menuName'
       },
       menuTree: [],
+      openMenuIds:[],
       dialogMenuVisible: false,
       assignTemp: {
         roleId: '',
@@ -199,7 +199,6 @@ export default {
   methods: {
     listPage() {
       this.listLoading = true;
-      this.listQuery.orgId = this.orgId;
       request.get("/system-manage/sys/role/listPage", this.listQuery)
         .then(response => {
           const {content, total} = response.data;
@@ -217,7 +216,6 @@ export default {
       Object.getOwnPropertyNames(this.temp).forEach(function (key) {
         _this.temp[key] = '';
       });
-      this.temp.orgId = this.orgId;
       this.temp.isAdmin = false;
     },
     handleAdd() {
@@ -295,6 +293,7 @@ export default {
         .then(response => {
           let data = response.data;
           this.menuTree.push(data);
+          this.openMenuIds = data.assignedIdList;
           this.$nextTick(() => {
             this.$refs.menuTree.setCheckedKeys(data.assignedIdList);
           });
@@ -307,7 +306,7 @@ export default {
         .then(response => {
           this.$message({
             type: 'success',
-            message: '权限菜单成功'
+            message: '分配菜单成功'
           })
           this.dialogMenuVisible = false;
         });

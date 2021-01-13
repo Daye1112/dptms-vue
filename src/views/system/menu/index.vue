@@ -262,7 +262,7 @@ export default {
     },
     listByMenuId() {
       this.listLoading = true;
-      request.get("/system-manage/sys/permission/listByMenuId", {"menuId": this.menuNode.id})
+      request.get("/system-manage/sys/permission/listByMenuId", {menuId: this.menuNode.id})
         .then(response => {
           this.permissionList = response.data
           this.listLoading = false;
@@ -299,7 +299,7 @@ export default {
         })
         return;
       }
-      request.get("/system-manage/sys/permission/listMenuAssigned", {"menuId": this.menuNode.id})
+      request.get("/system-manage/sys/permission/listMenuAssigned", {menuId: this.menuNode.id})
         .then(response => {
           response.data.forEach(item => {
             this.allPermissionList.push({
