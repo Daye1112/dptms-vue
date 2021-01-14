@@ -66,4 +66,8 @@ export default {
     background: #f3f5f8;
   }
 
+  .svg-icon {
+    width: 16px;
+    height: 16px;
+  }
 </style>

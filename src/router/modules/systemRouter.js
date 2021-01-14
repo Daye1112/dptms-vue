@@ -1,4 +1,3 @@
-
 const systemRouter = {
   path: '/system',
   name: 'system',
@@ -15,6 +14,12 @@ const systemRouter = {
       name: 'dashboard',
       component: (resolve) => require(['@/views/system/dashboard'], resolve),
       meta: {title: '主页', icon: 'dashboard'}
+    },
+    {
+      path: 'organization',
+      name: 'organization',
+      component: (resolve) => require(['@/views/system/organization'], resolve),
+      meta: {title: '组织管理', icon: 'organization'}
     },
     {
       path: 'user',
