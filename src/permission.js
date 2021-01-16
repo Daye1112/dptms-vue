@@ -1,11 +1,11 @@
 import router from './router'
 import store from './store'
-import { Message } from 'element-ui'
+import {Message} from 'element-ui'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import getPageTitle from '@/utils/getPageTitle'
 import {resetRouter} from '@/router'
-import {getRefreshToken, getToken} from '@/utils/auth'
+import {getRefreshToken, getAccessToken} from '@/utils/auth'
 
 NProgress.configure({showSpinner: false})
 
@@ -15,7 +15,7 @@ router.beforeEach(async (to, from, next) => {
   NProgress.start();
   document.title = getPageTitle(to.meta.title);
 
-  const hasToken = getToken() && getRefreshToken();
+  const hasToken = getAccessToken() && getRefreshToken();
   if (hasToken) {
     // 登录成功
     if (to.path === '/login') {

@@ -2,7 +2,7 @@ import axios from 'axios'
 import {Message} from 'element-ui'
 import {stringify} from 'qs'
 import router from '@/router'
-import {getRefreshToken, getToken} from '@/utils/auth'
+import {getRefreshToken, getAccessToken} from '@/utils/auth'
 
 const baseApi = process.env.VUE_APP_BASE_API // '/auth/vCode'
 
@@ -16,12 +16,12 @@ const service = axios.create({
 // 拦截处理
 service.interceptors.request.use(
   config => {
-    let token = getToken();
-    let refresh = getRefreshToken();
-    if (token && refresh) {
+    let accessToken = getAccessToken();
+    let refreshToken = getRefreshToken();
+    if (accessToken && refreshToken) {
       // 添加token
-      config.headers['DptmsAccessToken'] = token;
-      config.headers['DptmsRefreshToken'] = refresh;
+      config.headers['DptmsAccessToken'] = accessToken;
+      config.headers['DptmsRefreshToken'] = refreshToken;
     }
     return config;
   },

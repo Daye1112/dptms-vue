@@ -3,11 +3,11 @@ import Cookies from 'js-cookie'
 const tokenKey = 'DptmsAccessToken'
 const refreshTokenKey = 'DptmsRefreshToken'
 
-export function getToken() {
+export function getAccessToken() {
   return Cookies.get(tokenKey)
 }
 
-export function removeToken() {
+export function removeAccessToken() {
   return Cookies.remove(tokenKey)
 }
 
