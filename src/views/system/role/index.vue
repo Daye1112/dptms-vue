@@ -53,11 +53,11 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="220" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button round size="mini" type="primary" @click="handleUpdate(row)">
-            修改
-          </el-button>
           <el-button round size="mini" type="primary" @click="handleAssignedMenu(row)">
             分配菜单
+          </el-button>
+          <el-button round size="mini" type="primary" @click="handleUpdate(row)">
+            修改
           </el-button>
           <el-button round size="mini" type="danger" @click="handleDelete(row)">
             删除
@@ -116,6 +116,7 @@
         <el-scrollbar wrap-class="scrollbar-wrapper">
           <el-tree
             show-checkbox
+            :check-strictly="true"
             :highlight-current="true"
             :default-expanded-keys="openMenuIds"
             ref="menuTree"

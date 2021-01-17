@@ -1,11 +1,11 @@
-import router from './router'
-import store from './store'
+import router from '.'
+import store from '../store'
 import {Message} from 'element-ui'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import getPageTitle from '@/utils/getPageTitle'
 import {resetRouter} from '@/router'
-import {getRefreshToken, getAccessToken} from '@/utils/auth'
+import {getRefreshToken, getAccessToken} from '../utils/auth'
 
 NProgress.configure({showSpinner: false})
 

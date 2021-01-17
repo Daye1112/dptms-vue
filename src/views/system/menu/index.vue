@@ -198,7 +198,7 @@ export default {
             if (!this.menuNode) {
               this.menuNode = data;
             }
-            if(this.openMenuIds.length === 0){
+            if (this.openMenuIds.length === 0) {
               this.openMenuIds.push(data.id);
             }
             this.listByMenuId();
@@ -366,6 +366,24 @@ export default {
 
       .permission_container {
         padding-left: 20px;
+      }
+    }
+  }
+</style>
+
+<style lang="scss">
+  .app-container {
+    .pop-transfer {
+      .el-dialog {
+        width: 45%;
+      }
+
+      .el-transfer-panel {
+        width: 100%;
+      }
+
+      .el-transfer-panel__list.is-filterable {
+        width: 100%;
       }
     }
   }

@@ -56,22 +56,12 @@
           <span>{{row.email || '--'}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="上次登录" prop="lastLoginTime" min-width="130" align="center">
-        <template slot-scope="{row}">
-          <span>{{row.lastLoginTime || '--'}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="密码更新" prop="pwdUpdateTime" min-width="130" align="center">
-        <template slot-scope="{row}">
-          <span>{{row.pwdUpdateTime || '--'}}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="更新时间" prop="mtime" min-width="130" align="center">
         <template slot-scope="{row}">
           <span>{{row.mtime}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" min-width="230" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" min-width="330" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button round size="mini" type="primary" @click="handleAssignedRole(row)">
             分配角色

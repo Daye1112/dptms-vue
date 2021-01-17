@@ -11,7 +11,7 @@ import store from './store'
 import router from './router'
 
 import '@/icons' // icon
-import '@/permission'
+import '@/router/permission'
 import common from "@/assets/js/common"
 
 // set ElementUI lang to EN
