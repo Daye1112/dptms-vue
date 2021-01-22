@@ -8,11 +8,11 @@ function copyExpectChildren(obj) {
   return temp
 }
 
-export function filterAsyncRoutes(node, permissions) {
+export function filterAsyncRoutes(node, menuCodeList) {
   if (node.children) {
     const tempNode = copyExpectChildren(node);
     node.children.forEach(childNode => {
-      const obj = filterAsyncRoutes(childNode, permissions);
+      const obj = filterAsyncRoutes(childNode, menuCodeList);
       if (obj.result) {
         tempNode.children.push(obj.node);
       }
@@ -23,8 +23,8 @@ export function filterAsyncRoutes(node, permissions) {
     }
   } else {
     // 叶节点
-    // const result = permissions.includes(node.meta.permission)
-    const result = true;
+    const menuCode = node.meta.menuCode;
+    const result = !menuCode || menuCodeList.includes(menuCode);
     return {
       result,
       node
@@ -47,14 +47,15 @@ const mutations = {
 }
 
 const actions = {
-  generateRoutes({commit}, permissions) {
+  generateRoutes({commit}, menuCodeList) {
     return new Promise(resolve => {
       // 包装路由
       const wrapRoutes = {
         children: [...asyncRoutes]
       };
       // 递归添加动态路由
-      const routes = filterAsyncRoutes(wrapRoutes, permissions);
+      const routes = filterAsyncRoutes(wrapRoutes, menuCodeList);
+      console.log(routes);
       // 解包路由
       const accessRoutes = routes.node.children;
       let mainRoutes = [{

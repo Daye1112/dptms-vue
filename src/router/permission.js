@@ -34,9 +34,15 @@ router.beforeEach(async (to, from, next) => {
         // 没有权限（第一次登陆 or 刷新）
         try {
           // 获取用户信息
+          await Promise.all([
+            store.dispatch('user/getInfo'),
+            store.dispatch('user/getMenuList')
+          ])
+          const menuCodeList = store.getters.menuCodeList;
           // 生成路由
-          store.dispatch('permission/generateRoutes', [])
+          store.dispatch('permission/generateRoutes', menuCodeList)
             .then((mainRoutes) => {
+              console.log(mainRoutes);
               // 解决再次登录路由重复添加的问题
               resetRouter();
               router.addRoutes(mainRoutes);

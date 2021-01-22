@@ -4,7 +4,7 @@ const systemRouter = {
   redirect: '/system/dashboard',
   component: (resolve) => require(['@/views/system/Main'], resolve),
   meta: {
-    menuCode: 'SYSTEM_MANAGE',
+    menuCode: 'SYS_MANAGE',
     icon: 'system-manage',
     title: '系统管理'
   },
@@ -19,31 +19,31 @@ const systemRouter = {
       path: 'organization',
       name: 'organization',
       component: (resolve) => require(['@/views/system/organization'], resolve),
-      meta: {title: '组织管理', icon: 'organization'}
+      meta: {menuCode: 'SYS_ORGANIZATION_MANAGE',title: '组织管理', icon: 'organization'}
     },
     {
       path: 'user',
       name: 'user',
       component: (resolve) => require(['@/views/system/user'], resolve),
-      meta: {title: '用户管理', icon: 'user'}
+      meta: {menuCode: 'SYS_USER_MANAGE',title: '用户管理', icon: 'user'}
     },
     {
       path: 'role',
       name: 'role',
       component: (resolve) => require(['@/views/system/role'], resolve),
-      meta: {title: '角色管理', icon: 'role'}
+      meta: {menuCode: 'SYS_ROLE_MANAGE',title: '角色管理', icon: 'role'}
     },
     {
       path: 'menu',
       name: 'menu',
       component: (resolve) => require(['@/views/system/menu'], resolve),
-      meta: {title: '菜单管理', icon: 'menu'}
+      meta: {menuCode: 'SYS_MENU_MANAGE',title: '菜单管理', icon: 'menu'}
     },
     {
       path: 'permission',
       name: 'permission',
       component: (resolve) => require(['@/views/system/permission'], resolve),
-      meta: {title: '权限管理', icon: 'permission'}
+      meta: {menuCode: 'SYS_PERMISSION_MANAGE',title: '权限管理', icon: 'permission'}
     },
   ]
 }
