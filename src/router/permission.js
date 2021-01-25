@@ -50,6 +50,7 @@ router.beforeEach(async (to, from, next) => {
             });
         } catch (error) {
           // 失败，说明有错
+          await store.dispatch('user/resetToken');
           Message.error(error);
           next(`/login?redirect=${to.path}`);
           NProgress.done();

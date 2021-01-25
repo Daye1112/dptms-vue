@@ -1,30 +1,55 @@
 <template>
   <el-container class="main">
     <el-header>
-      <el-menu
-        :default-active="activerouter"
-        width="auto"
-        class="top-menu"
-        mode="horizontal"
-        @select="handleSelect"
-        background-color="#545c64"
-        text-color="#fff"
-        active-text-color="#ffd04b">
-        <div class="top-logo" @click="goTo('home')">
-          <svg-icon icon-class="monitor" class-name="icon"/>
-          <span>DPTMS-项目组管理系统</span>
-        </div>
-        <template v-if="mainChildrenRoutes && mainChildrenRoutes.length > 0">
-          <template v-for="item in mainChildrenRoutes">
-            <template v-if="!item.hidden">
-              <el-menu-item :index="item.name">
-                <svg-icon :icon-class="item.meta && item.meta.icon"/>
-                {{item.meta && item.meta.title}}
-              </el-menu-item>
+      <el-row>
+        <el-col :span="20">
+          <el-menu
+            :default-active="activerouter"
+            width="auto"
+            class="top-menu"
+            mode="horizontal"
+            @select="handleSelect"
+            background-color="#545c64"
+            text-color="#e0e0e0"
+            active-text-color="#ffd04b">
+            <div class="top-logo" @click="goTo('home')">
+              <svg-icon icon-class="monitor" class-name="icon"/>
+              <span>DPTMS-项目组管理系统</span>
+            </div>
+            <template v-if="mainChildrenRoutes && mainChildrenRoutes.length > 0">
+              <template v-for="item in mainChildrenRoutes">
+                <template v-if="!item.hidden">
+                  <el-menu-item :index="item.name">
+                    <svg-icon :icon-class="item.meta && item.meta.icon"/>
+                    {{item.meta && item.meta.title}}
+                  </el-menu-item>
+                </template>
+              </template>
             </template>
-          </template>
-        </template>
-      </el-menu>
+          </el-menu>
+        </el-col>
+        <el-col :span="4" class="right-menu">
+          <el-dropdown trigger="click" class="dropdown">
+            <div class="user-avatar">
+              <img :src="defaultAvatar">
+              <span class="user-name">{{userInfo.username}}</span>
+            </div>
+            <el-dropdown-menu slot="dropdown">
+              <router-link to="/">
+                <el-dropdown-item>
+                  个人信息
+                </el-dropdown-item>
+              </router-link>
+              <el-dropdown-item divided @click.native="logout">
+            <span style="display:block;">
+              <svg-icon icon-class="logout"/>
+              退出
+            </span>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </el-col>
+      </el-row>
     </el-header>
     <el-container>
       <router-view v-if="isRouterAlive" :key="key"/>
@@ -35,6 +60,7 @@
 <script>
 import {mapGetters} from 'vuex'
 import logo from '@/assets/images/logo.png'
+import defaultAvatar from '@/assets/images/default_avatar.gif'
 
 export default {
   name: "Main",
@@ -42,12 +68,14 @@ export default {
     return {
       isRouterAlive: true,
       logoSrc: logo,
-      activeRouter: ''
+      activeRouter: '',
+      defaultAvatar: defaultAvatar
     }
   },
   computed: {
     ...mapGetters([
       'mainChildrenRoutes',
+      'userInfo'
     ]),
     key() {
       return this.$route.path;
@@ -60,9 +88,12 @@ export default {
     handleSelect(key, keyPath) {
       this.goTo(key);
     },
-    goTo(name){
+    goTo(name) {
       this.activerouter = name;
       this.$router.push({name: name});
+    },
+    logout() {
+
     }
   }
 }
@@ -75,7 +106,7 @@ export default {
 
     .top-logo {
       font-size: 16px;
-      color: #fff;
+      color: #e0e0e0;
       display: flex;
       align-items: center;
       cursor: pointer;
@@ -88,6 +119,36 @@ export default {
         width: 32px;
         height: 32px;
       }
+    }
+  }
+
+  .right-menu {
+    height: 61px;
+    background: #545c64;
+    text-align: right;
+
+    .dropdown {
+      height: 61px;
+      .user-avatar {
+        display: flex;
+        float: right;
+        color: #e0e0e0;
+        font-size: 16px;
+        cursor: pointer;
+
+        img {
+          margin-top: 10px;
+          border-radius: 50%;
+          width: 40px;
+          height: 40px;
+        }
+        span{
+          padding: 0 5px 0 5px;
+        }
+      }
+    }
+    &:hover {
+      background: rgba(84, 92, 100, 0);
     }
   }
 

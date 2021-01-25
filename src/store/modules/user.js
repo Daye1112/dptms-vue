@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import { removeRefreshToken, removeAccessToken } from '@/utils/auth'
 // import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
@@ -20,6 +21,9 @@ const mutations = {
   },
   SET_MENU_CODE_LIST: (state, menuCodeList) => {
     state.menuCodeList = menuCodeList;
+  },
+  RESET_STATE: (state) => {
+    Object.assign(state, getDefaultState());
   }
 }
 
@@ -66,7 +70,16 @@ const actions = {
           reject(error)
         })
     })
-  }
+  },
+  resetToken({ commit }) {
+    return new Promise(resolve => {
+      // 移除token
+      removeAccessToken();
+      removeRefreshToken();
+      commit('RESET_STATE'); // 重置状态
+      resolve();
+    })
+  },
 }
 
 export default {
