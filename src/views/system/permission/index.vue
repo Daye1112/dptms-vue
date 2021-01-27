@@ -185,7 +185,7 @@ export default {
   methods: {
     listPage() {
       this.listLoading = true;
-      request.get("/system-manage/sys/permission/listPage", this.listQuery)
+      request.get("/auth/permission/listPage", this.listQuery)
         .then(response => {
           const {content, total} = response.data;
           this.list = content;
@@ -194,7 +194,7 @@ export default {
         });
     },
     listGroup() {
-      request.get("/system-manage/sys/permission/listGroup")
+      request.get("/auth/permission/listGroup")
         .then(response => {
           this.groupList = response.data;
         });
@@ -216,7 +216,7 @@ export default {
     add() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          request.post("/system-manage/sys/permission/insert", this.temp)
+          request.post("/auth/permission/insert", this.temp)
             .then(response => {
               this.$message({
                 type: 'success',
@@ -243,7 +243,7 @@ export default {
     update() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          request.post("/system-manage/sys/permission/update", this.temp)
+          request.post("/auth/permission/update", this.temp)
             .then(response => {
               this.$message({
                 type: 'success',
@@ -262,7 +262,7 @@ export default {
         type: 'warning'
       }).then(() => {
         // 发送请求
-        request.get("/system-manage/sys/permission/deleteById", {id: row.id})
+        request.get("/auth/permission/deleteById", {id: row.id})
           .then(response => {
             this.$message({
               type: 'success',

@@ -200,7 +200,7 @@ export default {
   methods: {
     listPage() {
       this.listLoading = true;
-      request.get("/system-manage/sys/role/listPage", this.listQuery)
+      request.get("/auth/role/listPage", this.listQuery)
         .then(response => {
           const {content, total} = response.data;
           this.list = content;
@@ -230,7 +230,7 @@ export default {
     add() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          request.post("/system-manage/sys/role/insert", this.temp)
+          request.post("/auth/role/insert", this.temp)
             .then(response => {
               this.$message({
                 type: 'success',
@@ -253,7 +253,7 @@ export default {
     update() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          request.post("/system-manage/sys/role/update", this.temp)
+          request.post("/auth/role/update", this.temp)
             .then(response => {
               this.$message({
                 type: 'success',
@@ -272,7 +272,7 @@ export default {
         type: 'warning'
       }).then(() => {
         // 发送请求
-        request.get("/system-manage/sys/role/deleteById", {id: row.id})
+        request.get("/auth/role/deleteById", {id: row.id})
           .then(response => {
             this.$message({
               type: 'success',
@@ -290,7 +290,7 @@ export default {
     handleAssignedMenu(row) {
       this.assignTemp.roleId = row.id;
       this.menuTree = [];
-      request.get("/system-manage/sys/menu/listRoleAssigned", this.assignTemp)
+      request.get("/auth/menu/listRoleAssigned", this.assignTemp)
         .then(response => {
           let data = response.data;
           this.menuTree.push(data);
@@ -303,7 +303,7 @@ export default {
     },
     assignedMenu() {
       this.assignTemp.menuIds = this.$refs.menuTree.getCheckedKeys().join(",");
-      request.get("/system-manage/sys/role/assignedMenu", this.assignTemp)
+      request.get("/auth/role/assignedMenu", this.assignTemp)
         .then(response => {
           this.$message({
             type: 'success',

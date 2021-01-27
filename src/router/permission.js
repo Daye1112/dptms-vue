@@ -42,7 +42,6 @@ router.beforeEach(async (to, from, next) => {
           // 生成路由
           store.dispatch('permission/generateRoutes', menuCodeList)
             .then((mainRoutes) => {
-              console.log(mainRoutes);
               // 解决再次登录路由重复添加的问题
               resetRouter();
               router.addRoutes(mainRoutes);

@@ -223,7 +223,7 @@ export default {
   methods: {
     listPage() {
       this.listLoading = true;
-      request.get("/system-manage/sys/user/listPage", this.listQuery)
+      request.get("/auth/user/listPage", this.listQuery)
         .then(response => {
           const {content, total} = response.data;
           this.list = content;
@@ -242,7 +242,7 @@ export default {
     update() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          request.post("/system-manage/sys/user/update", this.temp)
+          request.post("/auth/user/update", this.temp)
             .then(response => {
               this.$message({
                 type: 'success',
@@ -268,7 +268,7 @@ export default {
     add() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          request.post("/system-manage/sys/user/insert", this.temp)
+          request.post("/auth/user/insert", this.temp)
             .then(response => {
               this.$message({
                 type: 'success',
@@ -287,7 +287,7 @@ export default {
         type: 'warning'
       }).then(() => {
         // 发送请求
-        request.get("/system-manage/sys/user/deleteById", {id: row.id})
+        request.get("/auth/user/deleteById", {id: row.id})
           .then(response => {
             this.$message({
               type: 'success',
@@ -315,7 +315,7 @@ export default {
         type: 'warning'
       }).then(() => {
         // 发送请求
-        request.get("/system-manage/sys/user/updateLock", {id: row.id, isLocked: realIsLocked})
+        request.get("/auth/user/updateLock", {id: row.id, isLocked: realIsLocked})
           .then(response => {
             this.$message({
               type: 'success',
@@ -331,7 +331,7 @@ export default {
       this.chooseRoleList = [];
       this.allRoleList = [];
       this.roleAssignTemp.userId = row.id;
-      request.get("/system-manage/sys/role/listUserAssigned", this.roleAssignTemp)
+      request.get("/auth/role/listUserAssigned", this.roleAssignTemp)
         .then(response => {
           response.data.forEach(item => {
             this.allRoleList.push({
@@ -347,7 +347,7 @@ export default {
     },
     assignedRole() {
       this.roleAssignTemp.roleIds = this.chooseRoleList.join(",");
-      request.get("/system-manage/sys/user/assignedRole", this.roleAssignTemp)
+      request.get("/auth/user/assignedRole", this.roleAssignTemp)
         .then(response => {
           this.$message({
             type: 'success',
@@ -360,7 +360,7 @@ export default {
       this.chooseOrgList = [];
       this.allOrgList = [];
       this.orgAssignTemp.userId = row.id;
-      request.get("/system-manage/sys/organization/listUserAssigned", this.orgAssignTemp)
+      request.get("/auth/organization/listUserAssigned", this.orgAssignTemp)
         .then(response => {
           response.data.forEach(item => {
             this.allOrgList.push({
@@ -376,7 +376,7 @@ export default {
     },
     assignedOrg() {
       this.orgAssignTemp.orgIds = this.chooseOrgList.join(",");
-      request.get("/system-manage/sys/user/assignedOrg", this.orgAssignTemp)
+      request.get("/auth/user/assignedOrg", this.orgAssignTemp)
         .then(response => {
           this.$message({
             type: 'success',

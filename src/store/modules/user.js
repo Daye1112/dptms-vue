@@ -43,7 +43,7 @@ const actions = {
   },
   getInfo({commit}) {
     return new Promise((resolve, reject) => {
-      request.get("/auth/user/getInfo")
+      request.get("/auth/activeUser/getInfo")
         .then(response => {
           // 获取用户信息
           commit('SET_USER_INFO', response.data);
@@ -56,7 +56,7 @@ const actions = {
   },
   getMenuList({commit}) {
     return new Promise((resolve, reject) => {
-      request.get("/auth/user/listMenu")
+      request.get("/auth/activeUser/listMenu")
         .then(response => {
           let menuList = response.data;
           let menuCodeList = menuList.map(item => item.menuCode);

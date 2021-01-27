@@ -55,7 +55,6 @@ const actions = {
       };
       // 递归添加动态路由
       const routes = filterAsyncRoutes(wrapRoutes, menuCodeList);
-      console.log(routes);
       // 解包路由
       const accessRoutes = routes.node.children;
       let mainRoutes = [{

@@ -190,7 +190,7 @@ export default {
   methods: {
     listTree() {
       this.menuTree = [];
-      request.get("/system-manage/sys/menu/listTree", {})
+      request.get("/auth/menu/listTree", {})
         .then(response => {
           let data = response.data;
           if (data) {
@@ -224,7 +224,7 @@ export default {
     add() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          request.post("/system-manage/sys/menu/insert", this.temp)
+          request.post("/auth/menu/insert", this.temp)
             .then(response => {
               this.$message({
                 type: 'success',
@@ -247,7 +247,7 @@ export default {
     update() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          request.post("/system-manage/sys/menu/update", this.temp)
+          request.post("/auth/menu/update", this.temp)
             .then(response => {
               this.$message({
                 type: 'success',
@@ -262,7 +262,7 @@ export default {
     },
     listByMenuId() {
       this.listLoading = true;
-      request.get("/system-manage/sys/permission/listByMenuId", {menuId: this.menuNode.id})
+      request.get("/auth/permission/listByMenuId", {menuId: this.menuNode.id})
         .then(response => {
           this.permissionList = response.data
           this.listLoading = false;
@@ -275,7 +275,7 @@ export default {
         type: 'warning'
       }).then(() => {
         // 发送请求
-        request.get("/system-manage/sys/menu/deleteById", {id: this.menuNode.id})
+        request.get("/auth/menu/deleteById", {id: this.menuNode.id})
           .then(response => {
             this.$message({
               type: 'success',
@@ -299,7 +299,7 @@ export default {
         })
         return;
       }
-      request.get("/system-manage/sys/permission/listMenuAssigned", {menuId: this.menuNode.id})
+      request.get("/auth/permission/listMenuAssigned", {menuId: this.menuNode.id})
         .then(response => {
           response.data.forEach(item => {
             this.allPermissionList.push({
@@ -322,7 +322,7 @@ export default {
         menuId: this.menuNode.id,
         perIds: perIds
       }
-      request.post("/system-manage/sys/menu/assignedPer", param)
+      request.post("/auth/menu/assignedPer", param)
         .then(response => {
           this.$message({
             type: 'success',

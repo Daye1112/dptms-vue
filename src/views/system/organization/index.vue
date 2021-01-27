@@ -142,7 +142,7 @@ export default {
   methods: {
     listPage() {
       this.listLoading = true;
-      request.get("/system-manage/sys/organization/listPage", this.listQuery)
+      request.get("/auth/organization/listPage", this.listQuery)
         .then(response => {
           const {content, total} = response.data;
           this.list = content;
@@ -168,7 +168,7 @@ export default {
     add() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          request.post("/system-manage/sys/organization/insert", this.temp)
+          request.post("/auth/organization/insert", this.temp)
             .then(response => {
               this.$message({
                 type: 'success',
@@ -191,7 +191,7 @@ export default {
     update() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          request.post("/system-manage/sys/organization/update", this.temp)
+          request.post("/auth/organization/update", this.temp)
             .then(response => {
               this.$message({
                 type: 'success',
@@ -210,7 +210,7 @@ export default {
         type: 'warning'
       }).then(() => {
         // 发送请求
-        request.get("/system-manage/sys/organization/deleteById", {id: row.id})
+        request.get("/auth/organization/deleteById", {id: row.id})
           .then(response => {
             this.$message({
               type: 'success',
