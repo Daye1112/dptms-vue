@@ -92,8 +92,9 @@ export default {
       this.activerouter = name;
       this.$router.push({name: name});
     },
-    logout() {
-
+    async logout() {
+      await this.$store.dispatch('user/logout')
+      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     }
   }
 }
@@ -143,12 +144,9 @@ export default {
           height: 40px;
         }
         span{
-          padding: 0 5px 0 5px;
+          padding: 0 10px 0 5px;
         }
       }
-    }
-    &:hover {
-      background: rgba(84, 92, 100, 0);
     }
   }
 

@@ -1,6 +1,5 @@
 import request from '@/utils/request'
-import { removeRefreshToken, removeAccessToken } from '@/utils/auth'
-// import { resetRouter } from '@/router'
+import { removeRefreshToken, removeAccessToken, removeVuex } from '@/utils/auth'
 
 const getDefaultState = () => {
   return {
@@ -78,6 +77,19 @@ const actions = {
       removeRefreshToken();
       commit('RESET_STATE'); // 重置状态
       resolve();
+    })
+  },
+  logout({ commit }) {
+    return new Promise((resolve, reject) => {
+      request.get("/auth/logout")
+        .then(() => {
+          commit('RESET_STATE')
+          removeVuex() // 删除sessionStorage
+          resolve()
+        })
+        .catch(error => {
+          reject(error)
+        })
     })
   },
 }
