@@ -1,10 +1,21 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.roleName" placeholder="角色名称"
+      <el-select
+        v-model="listQuery.perGroup"
+        size="small"
+        style="width: 200px"
+        class="filter-item"
+        placeholder="权限组"
+        @change="handleFilter"
+      >
+        <el-option key="全部" label="全部" value=""/>
+        <el-option v-for="item in groupList" :key="item.perGroup" :label="item.perGroup" :value="item.perGroup"/>
+      </el-select>
+      <el-input v-model="listQuery.perName" placeholder="权限名"
                 size="small" class="filter-item"
                 @keyup.enter.native="handleFilter"/>
-      <el-input v-model="listQuery.roleCode" placeholder="角色编号"
+      <el-input v-model="listQuery.perCode" placeholder="权限码"
                 size="small" class="filter-item"
                 @keyup.enter.native="handleFilter"/>
       <el-button round size="small" class="filter-item"
@@ -31,19 +42,24 @@
         align="center"
         width="50"
       />
-      <el-table-column label="角色名称" prop="roleName" min-width="100" align="center">
+      <el-table-column label="权限名称" prop="perName" min-width="100" align="center">
         <template slot-scope="{row}">
-          <span>{{row.roleName}}</span>
+          <span>{{row.perName}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="角色编号" prop="roleCode" min-width="100" align="center">
+      <el-table-column label="权限码" prop="perCode" min-width="100" align="center">
         <template slot-scope="{row}">
-          <span>{{row.roleCode}}</span>
+          <span>{{row.perCode}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="是否管理员" prop="isAdmin" min-width="40" align="center">
+      <el-table-column label="权限组" prop="perGroup" min-width="80" align="center">
         <template slot-scope="{row}">
-          <span>{{row.isAdmin ? "是" : "否"}}</span>
+          <span>{{row.perGroup}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="权限url" prop="perUrl" min-width="150" align="center">
+        <template slot-scope="{row}">
+          <span>{{row.perUrl}}</span>
         </template>
       </el-table-column>
       <el-table-column label="更新时间" prop="mtime" min-width="130" align="center">
@@ -51,15 +67,12 @@
           <span>{{row.mtime}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="220" class-name="small-padding fixed-width">
-        <template slot-scope="{row}">
-          <el-button round size="mini" type="primary" @click="handleAssignedMenu(row)">
-            分配菜单
-          </el-button>
-          <el-button round size="mini" type="primary" @click="handleUpdate(row)">
+      <el-table-column label="操作" align="center" width="140" class-name="small-padding fixed-width">
+        <template slot-scope="{row,$index}">
+          <el-button size="mini" type="primary" @click="handleUpdate(row)">
             修改
           </el-button>
-          <el-button round size="mini" type="danger" @click="handleDelete(row)">
+          <el-button size="mini" type="danger" @click="handleDelete(row)">
             删除
           </el-button>
         </template>
@@ -85,16 +98,23 @@
         :model="temp"
         size="small"
         label-position="left"
-        label-width="100px"
+        label-width="70px"
       >
-        <el-form-item label="角色名称" prop="roleName">
-          <el-input v-model="temp.roleName"/>
+        <el-form-item label="权限组" prop="perGroup">
+          <el-autocomplete
+            v-model="temp.perGroup"
+            :style="{width: '100%'}"
+            :fetch-suggestions="querySearch"
+          />
         </el-form-item>
-        <el-form-item label="角色编号" prop="roleCode">
-          <el-input v-model="temp.roleCode"/>
+        <el-form-item label="权限名" prop="perName">
+          <el-input v-model="temp.perName"/>
         </el-form-item>
-        <el-form-item label="是否管理员" prop="isAdmin">
-          <el-checkbox v-model="temp.isAdmin">是否管理员</el-checkbox>
+        <el-form-item label="权限码" prop="perCode">
+          <el-input v-model="temp.perCode"/>
+        </el-form-item>
+        <el-form-item label="权限url" prop="perUrl">
+          <el-input v-model="temp.perUrl"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -102,34 +122,6 @@
           取消
         </el-button>
         <el-button round size="medium" type="primary" @click="dialogStatus === 'create'? add() : update()">
-          确定
-        </el-button>
-      </div>
-    </el-dialog>
-    <el-dialog
-      v-el-drag-dialog
-      title="分配菜单"
-      :visible.sync="dialogMenuVisible"
-      width="35%"
-    >
-      <div class="menu-tree">
-        <el-scrollbar wrap-class="scrollbar-wrapper">
-          <el-tree
-            show-checkbox
-            :check-strictly="true"
-            :highlight-current="true"
-            :default-expanded-keys="openMenuIds"
-            ref="menuTree"
-            :data="menuTree"
-            node-key="id"
-            :props="defaultProps"/>
-        </el-scrollbar>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button round size="medium" @click="dialogMenuVisible = false">
-          取消
-        </el-button>
-        <el-button round size="medium" type="primary" @click="assignedMenu">
           确定
         </el-button>
       </div>
@@ -145,62 +137,55 @@ import elDragDialog from '@/directive/el-drag-dialog'
 import waves from '@/directive/waves'
 
 export default {
-  name: "Role",
+  name: "Permission",
   components: {Pagination},
   directives: {waves, elDragDialog},
   computed: {
-    ...mapGetters([
-      'orgId',
-    ]),
+    ...mapGetters([])
   },
   data() {
     return {
       listQuery: {
         currentPage: 1,
         pageSize: 10,
-        roleName: '',
-        roleCode: ''
+        perName: '',
+        perCode: '',
+        perGroup: '',
+        perUrl: '',
       },
       list: [],
       total: 0,
       listLoading: false,
-      textMap: {
-        update: '修改角色',
-        create: '添加角色'
-      },
       dialogStatus: '',
-      dialogFormVisible: false,
-      rules: {
-        roleName: [{required: true, message: '请输入角色名称', trigger: 'blur'}],
-        roleCode: [{required: true, message: '请输入角色编号', trigger: 'blur'}],
-        isAdmin: [{required: true, message: '请选择是否管理员', trigger: 'blur'}]
+      textMap: {
+        update: '修改权限',
+        create: '添加权限'
       },
       temp: {
         id: '',
-        roleName: '',
-        roleCode: '',
-        isAdmin: false
+        perName: '',
+        perCode: '',
+        perGroup: '',
+        perUrl: ''
       },
-      defaultProps: {
-        children: 'children',
-        label: 'menuName'
-      },
-      menuTree: [],
-      openMenuIds:[],
-      dialogMenuVisible: false,
-      assignTemp: {
-        roleId: '',
-        menuIds: ''
+      groupList: [],
+      dialogFormVisible: false,
+      rules: {
+        perGroup: [{required: true, message: '请输入权限组', trigger: ['blur', 'change']}],
+        perName: [{required: true, message: '请输入权限名', trigger: 'blur'}],
+        perCode: [{required: true, message: '请输入权限码', trigger: 'blur'}],
+        perUrl: [{required: true, message: '请输入权限url', trigger: 'blur'}]
       }
     }
   },
   created() {
     this.listPage();
+    this.listGroup();
   },
   methods: {
     listPage() {
       this.listLoading = true;
-      request.get("/auth/role/listPage", this.listQuery)
+      request.get("/auth/permission/listPage", this.listQuery)
         .then(response => {
           const {content, total} = response.data;
           this.list = content;
@@ -208,19 +193,20 @@ export default {
           this.listLoading = false;
         });
     },
-    handleFilter() {
-      this.listQuery.currentPage = 1;
+    listGroup() {
+      request.get("/auth/permission/listGroup")
+        .then(response => {
+          this.groupList = response.data;
+        });
+    },
+    setPagination() {
       this.listPage();
     },
-    initHandleParam() {
+    handleAdd() {
       let _this = this;
       Object.getOwnPropertyNames(this.temp).forEach(function (key) {
         _this.temp[key] = '';
       });
-      this.temp.isAdmin = false;
-    },
-    handleAdd() {
-      this.initHandleParam();
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -230,17 +216,22 @@ export default {
     add() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          request.post("/auth/role/insert", this.temp)
+          request.post("/auth/permission/insert", this.temp)
             .then(response => {
               this.$message({
                 type: 'success',
-                message: '角色添加成功'
+                message: '权限添加成功'
               })
               this.listPage();
+              this.listGroup();
               this.dialogFormVisible = false
             })
         }
       })
+    },
+    handleFilter() {
+      this.listQuery.currentPage = 1;
+      this.listPage();
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row);
@@ -253,11 +244,11 @@ export default {
     update() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          request.post("/auth/role/update", this.temp)
+          request.post("/auth/permission/update", this.temp)
             .then(response => {
               this.$message({
                 type: 'success',
-                message: '角色更新成功'
+                message: '权限更新成功'
               });
               this.listPage();
               this.dialogFormVisible = false;
@@ -266,13 +257,13 @@ export default {
       })
     },
     handleDelete(row) {
-      this.$confirm('确定永久删除该角色, 是否继续?', '提示', {
+      this.$confirm('确定永久删除该权限, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         // 发送请求
-        request.get("/auth/role/deleteById", {id: row.id})
+        request.get("/auth/permission/deleteById", {id: row.id})
           .then(response => {
             this.$message({
               type: 'success',
@@ -284,44 +275,16 @@ export default {
 
       })
     },
-    setPagination() {
-      this.listPage();
+    querySearch(queryString, cb) {
+      const rightsList = this.groupList.map(item => ({value: item.perGroup}));
+      const queryExp = new RegExp(queryString);
+      var results = queryString ? rightsList.filter(item => queryExp.test(item.value)) : rightsList;
+      return cb(results);
     },
-    handleAssignedMenu(row) {
-      this.assignTemp.roleId = row.id;
-      this.menuTree = [];
-      request.get("/auth/menu/listRoleAssigned", this.assignTemp)
-        .then(response => {
-          let data = response.data;
-          this.menuTree.push(data);
-          this.openMenuIds = data.assignedIdList;
-          this.$nextTick(() => {
-            this.$refs.menuTree.setCheckedKeys(data.assignedIdList);
-          });
-          this.dialogMenuVisible = true;
-        });
-    },
-    assignedMenu() {
-      this.assignTemp.menuIds = this.$refs.menuTree.getCheckedKeys().join(",");
-      request.get("/auth/role/assignedMenu", this.assignTemp)
-        .then(response => {
-          this.$message({
-            type: 'success',
-            message: '分配菜单成功'
-          })
-          this.dialogMenuVisible = false;
-        });
-    }
   }
 }
 </script>
 
-<style lang="scss" scoped>
-  .menu-tree {
-    height: 300px;
+<style scoped>
 
-    .el-scrollbar {
-      height: 100%;
-    }
-  }
 </style>

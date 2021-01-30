@@ -46,12 +46,12 @@
           <span>{{row.mtime}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="220" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="140" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button round size="mini" type="primary" @click="handleUpdate(row)">
+          <el-button size="mini" type="primary" @click="handleUpdate(row)">
             修改
           </el-button>
-          <el-button round size="mini" type="danger" @click="handleDelete(row)">
+          <el-button size="mini" type="danger" @click="handleDelete(row)">
             删除
           </el-button>
         </template>

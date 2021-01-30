@@ -138,10 +138,10 @@ export default {
         cursor: pointer;
 
         img {
-          margin-top: 10px;
+          margin-top: 12px;
           border-radius: 50%;
-          width: 40px;
-          height: 40px;
+          width: 32px;
+          height: 32px;
         }
         span{
           padding: 0 10px 0 5px;

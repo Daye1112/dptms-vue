@@ -61,21 +61,21 @@
           <span>{{row.mtime}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" min-width="330" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" min-width="290" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button round size="mini" type="primary" @click="handleAssignedRole(row)">
+          <el-button size="mini" type="primary" @click="handleAssignedRole(row)">
             分配角色
           </el-button>
-          <el-button round size="mini" type="primary" @click="handleAssignedOrg(row)">
+          <el-button size="mini" type="primary" @click="handleAssignedOrg(row)">
             分配组织
           </el-button>
-          <el-button round size="mini" type="primary" @click="handleUpdate(row)">
+          <el-button size="mini" type="primary" @click="handleUpdate(row)">
             修改
           </el-button>
-          <el-button round size="mini" type="danger" @click="handleDelete(row)">
+          <el-button size="mini" type="danger" @click="handleDelete(row)">
             删除
           </el-button>
-          <el-button round size="mini" :type="row.isLocked === 0 ? 'danger' : 'primary'" @click="handleLock(row)">
+          <el-button size="mini" :type="row.isLocked === 0 ? 'danger' : 'primary'" @click="handleLock(row)">
             {{row.isLocked === 0 ? "锁定":"解锁"}}
           </el-button>
         </template>
