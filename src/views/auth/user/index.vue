@@ -61,7 +61,7 @@
           <span>{{row.mtime}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" min-width="290" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" min-width="300" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button size="mini" type="primary" @click="handleAssignedRole(row)">
             分配角色

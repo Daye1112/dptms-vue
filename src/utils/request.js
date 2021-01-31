@@ -32,11 +32,9 @@ service.interceptors.request.use(
 
 service.interceptors.response.use(
   response => {
-    // console.log('请求成功')
     return response.data
   },
   async error => {
-    // console.log('请求失败', error)
     const {response} = error
     const {code, message} = response.data
     if (code) {
@@ -45,12 +43,10 @@ service.interceptors.response.use(
           Message.error(message || '业务处理异常')
           break
         case 401:
-          // await store.dispatch('user/logout')
           router.push('/login')
           Message.error(message || '请先登陆')
           break
         case 403:
-          router.push('/')
           Message.error(message || '权限不足')
           break;
         case 500:
@@ -94,5 +90,5 @@ const request = {
 }
 
 export default request
-export const { get: axiosGet } = request
-export const { post: axiosPost } = request
+export const {get: axiosGet} = request
+export const {post: axiosPost} = request
