@@ -9,7 +9,8 @@
         查询
       </el-button>
       <el-button round size="small" class="filter-item fr"
-                 type="success" icon="el-icon-plus" @click="handleAdd">
+                 type="success" icon="el-icon-plus"
+                 v-permission="['SYS_CACHE_INSERT']" @click="handleAdd">
         添加
       </el-button>
     </div>
@@ -48,7 +49,8 @@
           <el-button size="mini" type="info" @click="handleView(row)">
             查看
           </el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(row)">
+          <el-button size="mini" type="danger"
+                     v-permission="['SYS_CACHE_DELETE']" @click="handleDelete(row)">
             删除
           </el-button>
         </template>
@@ -141,6 +143,7 @@ export default {
     }
   },
   created() {
+    this.listPage();
   },
   methods: {
     setPagination() {
@@ -153,10 +156,11 @@ export default {
           const {content, total} = response.data;
           this.list = content;
           this.total = total;
+          this.listLoading = false;
         }).catch((err) => {
         //对异常进行处理
+        this.listLoading = false;
       });
-      this.listLoading = false;
     },
     handleFilter() {
       this.listQuery.currentPage = 1;

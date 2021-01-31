@@ -23,7 +23,8 @@
         查询
       </el-button>
       <el-button round size="small" class="filter-item fr"
-                 type="success" icon="el-icon-plus" @click="handleAdd">
+                 type="success" icon="el-icon-plus"
+                 v-permission="['SYS_PERMISSION_INSERT']" @click="handleAdd">
         添加
       </el-button>
     </div>
@@ -69,10 +70,12 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="140" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button size="mini" type="primary" @click="handleUpdate(row)">
+          <el-button size="mini" type="primary"
+                     v-permission="['SYS_PERMISSION_UPDATE']" @click="handleUpdate(row)">
             修改
           </el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(row)">
+          <el-button size="mini" type="danger"
+                     v-permission="['SYS_PERMISSION_DELETE']" @click="handleDelete(row)">
             删除
           </el-button>
         </template>

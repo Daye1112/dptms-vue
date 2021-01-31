@@ -19,19 +19,23 @@
         <h3>{{this.menuNode.menuName}} - {{this.menuNode.menuCode}}</h3>
         <div class="filter-container">
           <el-button round size="small" class="filter-item"
-                     type="success" icon="el-icon-plus" @click="handleAdd">
+                     type="success" icon="el-icon-plus"
+                     v-permission="['SYS_MENU_INSERT']" @click="handleAdd">
             添加子节点
           </el-button>
           <el-button round size="small" class="filter-item"
-                     type="primary" icon="el-icon-edit" @click="handleUpdate">
+                     type="primary" icon="el-icon-edit"
+                     v-permission="['SYS_MENU_UPDATER']" @click="handleUpdate">
             修改
           </el-button>
           <el-button round size="small" class="filter-item"
-                     type="danger" icon="el-icon-delete" @click="handleDelete">
+                     type="danger" icon="el-icon-delete"
+                     v-permission="['SYS_MENU_DELETE']" @click="handleDelete">
             删除
           </el-button>
           <el-button round size="small" class="filter-item"
-                     type="primary" icon="el-icon-setting" @click="handleAssignedPer">
+                     type="primary" icon="el-icon-setting"
+                     v-permission="['SYS_MENU_ASSIGNED_PER']" @click="handleAssignedPer">
             分配权限
           </el-button>
         </div>

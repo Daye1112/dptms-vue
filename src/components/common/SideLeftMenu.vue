@@ -71,3 +71,12 @@ export default {
     height: 16px;
   }
 </style>
+
+<style lang="scss">
+  .left-menu {
+    .el-menu-item {
+      height: 40px;
+      line-height: 40px;
+    }
+  }
+</style>

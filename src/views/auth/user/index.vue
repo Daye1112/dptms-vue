@@ -12,7 +12,9 @@
         查询
       </el-button>
       <el-button round size="small" class="filter-item fr"
-                 type="success" icon="el-icon-plus" @click="handleAdd">
+                 type="success" icon="el-icon-plus"
+                 v-permission="['SYS_USER_ADD']"
+                 @click="handleAdd">
         添加
       </el-button>
     </div>
@@ -63,19 +65,24 @@
       </el-table-column>
       <el-table-column label="操作" align="center" min-width="300" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button size="mini" type="primary" @click="handleAssignedRole(row)">
+          <el-button size="mini" type="primary"
+                     v-permission="['SYS_USER_ASSIGNED_ROLE']" @click="handleAssignedRole(row)">
             分配角色
           </el-button>
-          <el-button size="mini" type="primary" @click="handleAssignedOrg(row)">
+          <el-button size="mini" type="primary"
+                     v-permission="['SYS_USER_ASSIGNED_ORG']" @click="handleAssignedOrg(row)">
             分配组织
           </el-button>
-          <el-button size="mini" type="primary" @click="handleUpdate(row)">
+          <el-button size="mini" type="primary"
+                     v-permission="['SYS_USER_UPDATE']" @click="handleUpdate(row)">
             修改
           </el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(row)">
+          <el-button size="mini" type="danger"
+                     v-permission="['SYS_USER_DELETE']" @click="handleDelete(row)">
             删除
           </el-button>
-          <el-button size="mini" :type="row.isLocked === 0 ? 'danger' : 'primary'" @click="handleLock(row)">
+          <el-button size="mini" :type="row.isLocked === 0 ? 'danger' : 'primary'"
+                     v-permission="['SYS_USER_LOCK']" @click="handleLock(row)">
             {{row.isLocked === 0 ? "锁定":"解锁"}}
           </el-button>
         </template>

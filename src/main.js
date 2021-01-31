@@ -13,12 +13,14 @@ import router from './router'
 import '@/icons' // icon
 import '@/router/permission'
 import common from "@/assets/js/common"
+import permission from "@/directive/permission"
 
 // set ElementUI lang to EN
 // Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
 Vue.use(ElementUI);
 Vue.use(common);
+Vue.use(permission);
 
 Vue.config.productionTip = false
 

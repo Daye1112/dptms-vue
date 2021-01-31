@@ -24,8 +24,6 @@ router.beforeEach(async (to, from, next) => {
       NProgress.done();
     } else {
       // 获取用户信息(权限)
-      // const permission = store.getters.permission
-      // const hasPermission = permission && permission.length > 0
       const mainRoutes = store.getters.mainRoutes;
       const hasPermission = mainRoutes && mainRoutes.length > 0;
       if (hasPermission) {

@@ -47,7 +47,9 @@
         </el-table-column>
         <el-table-column label="操作" align="center" min-width="80" class-name="small-padding fixed-width">
           <template slot-scope="{row}">
-            <el-button size="mini" type="danger" @click="handleForcedOffline(row)">
+            <el-button size="mini" type="danger"
+                       v-permission="['SYS_ONLINE_USER_FORCED_OFFLINE']"
+                       @click="handleForcedOffline(row)">
               强制下线
             </el-button>
           </template>
