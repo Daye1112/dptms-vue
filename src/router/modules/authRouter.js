@@ -46,6 +46,12 @@ const authRouter = {
       component: (resolve) => require(['@/views/auth/permission'], resolve),
       meta: {menuCode: 'SYS_PERMISSION_MANAGE', title: '权限管理', icon: 'permission'}
     },
+    {
+      path: 'onlineUser',
+      name: 'onlineUser',
+      component: (resolve) => require(['@/views/auth/onlineUser'], resolve),
+      meta: {menuCode: 'SYS_ONLINE_USER_MANAGE', title: '在线用户', icon: 'onlineUser'}
+    },
   ]
 }
 
