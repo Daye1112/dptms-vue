@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    系统管理-介绍
+    监控管理-介绍
   </div>
 </template>
 

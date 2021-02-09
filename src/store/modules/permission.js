@@ -10,6 +10,15 @@ function copyExpectChildren(obj) {
 
 export function filterAsyncRoutes(node, menuCodeList) {
   if (node.children) {
+    // 父节点
+    const menuCode = node.meta.menuCode;
+    const result = !menuCode || menuCodeList.includes(menuCode);
+    if (!result) {
+      return {
+        result,
+        node
+      };
+    }
     const tempNode = copyExpectChildren(node);
     node.children.forEach(childNode => {
       const obj = filterAsyncRoutes(childNode, menuCodeList);
@@ -51,7 +60,8 @@ const actions = {
     return new Promise(resolve => {
       // 包装路由
       const wrapRoutes = {
-        children: [...asyncRoutes]
+        children: [...asyncRoutes],
+        meta: {}
       };
       // 递归添加动态路由
       const routes = filterAsyncRoutes(wrapRoutes, menuCodeList);

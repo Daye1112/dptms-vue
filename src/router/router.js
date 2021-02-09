@@ -1,6 +1,7 @@
 import Main from '@/views/Main'
 import authRouter from './modules/authRouter'
 import systemRouter from './modules/systemRouter'
+import monitorRouter from './modules/monitorRouter'
 
 export const constantRoutes = [
   {
@@ -33,7 +34,8 @@ export const constantRoutes = [
 
 export const asyncRoutes = [
   systemRouter,
-  authRouter
+  authRouter,
+  monitorRouter
 ]
 
 // export default {
