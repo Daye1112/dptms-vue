@@ -22,6 +22,12 @@ const monitorRouter = {
       component: (resolve) => require(['@/views/monitor/loginLog'], resolve),
       meta: {menuCode: 'MONITOR_LOGIN_LOG_MANAGE', title: '登录日志', icon: 'loginLog'}
     },
+    {
+      path: 'operateLog',
+      name: 'operateLog',
+      component: (resolve) => require(['@/views/monitor/operateLog'], resolve),
+      meta: {menuCode: 'MONITOR_OPERATE_LOG_MANAGE', title: '操作日志', icon: 'operateLog'}
+    },
   ]
 }
 

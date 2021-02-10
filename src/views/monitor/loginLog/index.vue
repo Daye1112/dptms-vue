@@ -84,7 +84,7 @@ import Pagination from '@/components/Pagination'
 import elDragDialog from '@/directive/el-drag-dialog'
 import waves from '@/directive/waves'
 export default {
-    name: "loginLog",
+  name: "loginLog",
   components: {Pagination},
   directives: {waves, elDragDialog},
   data() {
