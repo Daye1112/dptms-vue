@@ -17,7 +17,7 @@
       >
         <el-option
           v-for="item in businessTypeList"
-          :key="item"
+          :key="item.key"
           :label="item.value"
           :value="item.key"
         />
@@ -32,7 +32,7 @@
       >
         <el-option
           v-for="item in logLevelList"
-          :key="item"
+          :key="item.key"
           :label="item.value"
           :value="item.key"
         />
@@ -62,7 +62,7 @@
             </el-form>
           </template>
         </el-table-column>
-        <el-table-column label="用户名" prop="key" min-width="100" align="center" show-overflow-tooltip>
+        <el-table-column label="用户名" prop="key" min-width="80" align="center" show-overflow-tooltip>
           <template slot-scope="{row}">
             <span>{{row.username}}</span>
           </template>
@@ -72,7 +72,7 @@
             <span>{{row.content}}</span>
           </template>
         </el-table-column>
-        <el-table-column label="请求地址" prop="expired" min-width="80" align="center">
+        <el-table-column label="请求地址" prop="expired" min-width="180" align="center">
           <template slot-scope="{row}">
             <span>{{row.url}}</span>
           </template>
@@ -97,12 +97,12 @@
             <span>{{logLevelMap[row.logLevel]}}</span>
           </template>
         </el-table-column>
-        <el-table-column label="业务类型" prop="expired" min-width="80" align="center">
+        <el-table-column label="业务类型" prop="expired" min-width="70" align="center">
           <template slot-scope="{row}">
             <span>{{businessTypeMap[row.businessType]}}</span>
           </template>
         </el-table-column>
-        <el-table-column label="接口耗时" prop="expired" min-width="120" align="center">
+        <el-table-column label="接口耗时" prop="expired" min-width="80" align="center">
           <template slot-scope="{row}">
             <el-tag :type="row.timeConsuming > 500 ? (row.timeConsuming > 1000 ? 'danger' : 'warning' ): 'success'">
               <span>{{ row.timeConsuming }} ms</span>
@@ -155,7 +155,7 @@
         listLoading: false,
         // 业务类型
         businessTypeList: [
-          {key: null, value: '全部'},
+          {key: '', value: '全部'},
           {key: 0, value: '其它'},
           {key: 1, value: '新增'},
           {key: 2, value: '修改'},
@@ -168,7 +168,7 @@
         businessTypeMap: {0: '其它', 1: '新增', 2: '修改', 3: '删除', 4: '导出', 5: '导入', 6: '强退', 7: '查询'},
         // 日志级别
         logLevelList: [
-          {key: null, value: '全部'},
+          {key: '', value: '全部'},
           {key: 0, value: 'TRACE'},
           {key: 1, value: 'DEBUG'},
           {key: 2, value: 'INFO'},
@@ -206,6 +206,18 @@
   }
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+  .app-container {
+    .demo-table-expand {
+      font-size: 0;
+    }
+    .demo-table-expand label {
+      color: #99a9bf;
+    }
+    .demo-table-expand .el-form-item {
+      margin-right: 0;
+      margin-bottom: 0;
+      width: 100%;
+    }
+  }
 </style>

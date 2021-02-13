@@ -5,6 +5,7 @@
         <el-menu
           :default-active="activeSideRouter"
           @select="handleSelect"
+          text-color="#5C5C5C"
           class="left-menu">
           <template v-for="item in sideRouter">
             <template v-if="!item.hidden">
@@ -75,6 +76,7 @@ export default {
 <style lang="scss">
   .left-menu {
     .el-menu-item {
+      /*color: #555555;*/
       height: 40px;
       line-height: 40px;
     }
