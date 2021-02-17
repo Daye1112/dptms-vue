@@ -28,6 +28,12 @@ const monitorRouter = {
       component: (resolve) => require(['@/views/monitor/operateLog'], resolve),
       meta: {menuCode: 'MONITOR_OPERATE_LOG_MANAGE', title: '操作日志', icon: 'operateLog'}
     },
+    {
+      path: 'apiStat',
+      name: 'apiStat',
+      component: (resolve) => require(['@/views/monitor/apiStat'], resolve),
+      meta: {menuCode: 'MONITOR_API_STAT_MANAGE', title: '接口监控', icon: 'apiStat'}
+    },
   ]
 }
 
