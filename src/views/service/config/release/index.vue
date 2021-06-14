@@ -13,32 +13,31 @@
 </template>
 
 <script>
-  import request from '@/utils/request'
-  import Pagination from '@/components/Pagination'
-  import elDragDialog from '@/directive/el-drag-dialog'
-  import waves from '@/directive/waves'
+import Pagination from '@/components/Pagination'
+import elDragDialog from '@/directive/el-drag-dialog'
+import waves from '@/directive/waves'
 
-  export default {
-    name: "Release",
-    components: {Pagination},
-    directives: {waves, elDragDialog},
-    data() {
-      return {
-        listQuery: {
-          currentPage: 1,
-          pageSize: 10,
-          researchKey: ''
-        },
-      }
-    },
-    created() {
-    },
-    methods: {
-      handleFilter() {
+export default {
+  name: "Release",
+  components: {Pagination},
+  directives: {waves, elDragDialog},
+  data() {
+    return {
+      listQuery: {
+        currentPage: 1,
+        pageSize: 10,
+        researchKey: ''
+      },
+    }
+  },
+  created() {
+  },
+  methods: {
+    handleFilter() {
 
-      }
     }
   }
+}
 </script>
 
 <style lang="scss">

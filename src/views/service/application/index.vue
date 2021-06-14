@@ -34,7 +34,7 @@
           <span>{{row.appCode}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="应用名称" prop="value" min-width="100" align="center" show-overflow-tooltip>
+      <el-table-column label="应用名称" prop="appName" min-width="100" align="center" show-overflow-tooltip>
         <template slot-scope="{row}">
           <span>{{row.appName}}</span>
         </template>
@@ -46,8 +46,13 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="220" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button size="mini" type="info" @click="handleView(row)">
-            查看
+          <el-button size="mini" type="info"
+                     v-permission="['SERVICE_APPLICATION_ASSIGNED_ORG']" @click="handleAssignedOrg(row)">
+            分配组织
+          </el-button>
+          <el-button size="mini" type="primary"
+                     v-permission="['SERVICE_APPLICATION_UPDATE']" @click="handleUpdate(row)">
+            修改
           </el-button>
           <el-button size="mini" type="danger"
                      v-permission="['SERVICE_APPLICATION_DELETE']" @click="handleDelete(row)">
@@ -64,6 +69,42 @@
       class="fr"
       @pagination="setPagination"
     />
+    <el-dialog
+      v-el-drag-dialog
+      :title="textMap[dialogStatus]"
+      :visible.sync="dialogFormVisible"
+      width="40%"
+    >
+      <el-form
+        ref="dataForm"
+        :rules="rules"
+        :model="temp"
+        size="small"
+        label-position="left"
+        label-width="70px"
+      >
+        <el-form-item label="应用编号" prop="appCode">
+          <el-input v-model="temp.appCode"/>
+        </el-form-item>
+        <el-form-item label="应用名称" prop="appName">
+          <el-input v-model="temp.appName"/>
+        </el-form-item>
+        <el-form-item label="应用类型" prop="appType">
+          <el-select v-model="temp.appType">
+            <el-option key="" label="请选择" value=""/>
+            <el-option v-for="item in appTypeMap" :key="item.key" :label="item.value" :value="item.key"/>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button round size="medium" @click="dialogFormVisible = false">
+          取消
+        </el-button>
+        <el-button round size="medium" type="primary" @click="dialogStatus === 'create'? add() : update()">
+          确定
+        </el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -72,12 +113,10 @@ import request from '@/utils/request'
 import Pagination from '@/components/Pagination'
 import elDragDialog from '@/directive/el-drag-dialog'
 import waves from '@/directive/waves'
-import JsonEditor from '@/components/JsonEditor'
-import {formatJson, parseJson} from "@/utils/common"
 
 export default {
   name: "Application",
-  components: {Pagination, JsonEditor},
+  components: {Pagination},
   directives: {waves, elDragDialog},
   data() {
     return {
@@ -88,6 +127,34 @@ export default {
       },
       list: [],
       total: 0,
+      dialogStatus: '',
+      textMap: {
+        update: '修改用户',
+        create: '添加用户'
+      },
+      temp: {
+        id: '',
+        orgId: '',
+        appCode: '',
+        appName: '',
+        appType: ''
+      },
+      dialogFormVisible: false,
+      rules: {
+        appCode: [{required: true, message: '请输入应用编号', trigger: 'blur'}],
+        appName: [{required: true, message: '请输入应用名称', trigger: 'blur'}],
+        appType: [{required: true, message: '请选择应用类型', trigger: 'blur'}],
+      },
+      appTypeMap: [
+        {
+          "key": 1,
+          "value": "服务"
+        },
+        {
+          "key": 2,
+          "value": "网关"
+        }
+      ],
     }
   },
   created() {
@@ -112,16 +179,76 @@ export default {
       this.listPage();
     },
     handleAdd() {
-      // let _this = this;
-      // Object.getOwnPropertyNames(this.temp).forEach(function (key) {
-      //   _this.temp[key] = '';
-      // });
-      // this.dialogStatus = 'create'
-      // this.dialogFormVisible = true
-      // this.$nextTick(() => {
-      //   this.$refs['dataForm'].clearValidate()
-      // })
+      let _this = this;
+      Object.getOwnPropertyNames(this.temp).forEach(function (key) {
+        _this.temp[key] = '';
+      });
+      this.dialogStatus = 'create';
+      this.dialogFormVisible = true;
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      });
     },
+    add() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          request.post("/system-manage/service/application/insert", this.temp)
+            .then(response => {
+              this.$message({
+                type: 'success',
+                message: '应用添加成功'
+              })
+              this.listPage();
+              this.dialogFormVisible = false
+            })
+        }
+      })
+    },
+    handleUpdate(row) {
+      this.temp = Object.assign({}, row);
+      this.dialogStatus = 'update';
+      this.dialogFormVisible = true;
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate();
+      });
+    },
+    update() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          request.post("/system-manage/service/application/update", this.temp)
+            .then(response => {
+              this.$message({
+                type: 'success',
+                message: '应用更新成功'
+              });
+              this.listPage();
+              this.dialogFormVisible = false;
+            })
+        }
+      })
+    },
+    handleDelete(row) {
+      this.$confirm('确定永久删除该应用, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 发送请求
+        request.get("/system/service/application/deleteById", {id: row.id})
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+            this.listPage();
+          })
+      }).catch(() => {
+
+      })
+    },
+    handleAssignedOrg(row) {
+
+    }
   }
 }
 </script>

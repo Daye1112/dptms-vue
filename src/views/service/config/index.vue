@@ -60,52 +60,52 @@
 </template>
 
 <script>
-  import request from '@/utils/request'
-  import Pagination from '@/components/Pagination'
-  import elDragDialog from '@/directive/el-drag-dialog'
-  import waves from '@/directive/waves'
+import request from '@/utils/request'
+import Pagination from '@/components/Pagination'
+import elDragDialog from '@/directive/el-drag-dialog'
+import waves from '@/directive/waves'
 
-  export default {
-    name: "Config",
-    components: {Pagination},
-    directives: {waves, elDragDialog},
-    data() {
-      return {
-        listQuery: {
-          currentPage: 1,
-          pageSize: 10,
-          researchKey: ''
-        },
-        list: [],
-        total: 0,
-      }
-    },
-    created() {
+export default {
+  name: "Config",
+  components: {Pagination},
+  directives: {waves, elDragDialog},
+  data() {
+    return {
+      listQuery: {
+        currentPage: 1,
+        pageSize: 10,
+        researchKey: ''
+      },
+      list: [],
+      total: 0,
+    }
+  },
+  created() {
+    this.listPage();
+  },
+  methods: {
+    setPagination() {
       this.listPage();
     },
-    methods: {
-      setPagination() {
-        this.listPage();
-      },
-      listPage() {
-        this.listLoading = true;
-        request.get("/system/service/application/listPage", this.listQuery)
-          .then(response => {
-            const {content, total} = response.data;
-            this.list = content;
-            this.total = total;
-            this.listLoading = false;
-          });
-      },
-      handleFilter() {
-        this.listQuery.currentPage = 1;
-        this.listPage();
-      },
-      viewProfile(row) {
+    listPage() {
+      this.listLoading = true;
+      request.get("/system-manage/service/application/listPage", this.listQuery)
+        .then(response => {
+          const {content, total} = response.data;
+          this.list = content;
+          this.total = total;
+          this.listLoading = false;
+        });
+    },
+    handleFilter() {
+      this.listQuery.currentPage = 1;
+      this.listPage();
+    },
+    viewProfile(row) {
 
-      }
     }
   }
+}
 </script>
 
 <style lang="scss">
