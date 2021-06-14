@@ -99,7 +99,7 @@ export default {
     },
     listPage() {
       this.listLoading = true;
-      request.get("/system/service/application/listPage", this.listQuery)
+      request.get("/system-manage/service/application/listPage", this.listQuery)
         .then(response => {
           const {content, total} = response.data;
           this.list = content;
