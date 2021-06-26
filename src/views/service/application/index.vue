@@ -81,7 +81,7 @@
         :model="temp"
         size="small"
         label-position="left"
-        label-width="70px"
+        label-width="80px"
       >
         <el-form-item label="应用编号" prop="appCode">
           <el-input v-model="temp.appCode"/>
@@ -120,6 +120,7 @@ export default {
   directives: {waves, elDragDialog},
   data() {
     return {
+      listLoading: false,
       listQuery: {
         currentPage: 1,
         pageSize: 10,
@@ -183,6 +184,8 @@ export default {
       Object.getOwnPropertyNames(this.temp).forEach(function (key) {
         _this.temp[key] = '';
       });
+      // 当前组织id
+      this.temp.orgId = 1;
       this.dialogStatus = 'create';
       this.dialogFormVisible = true;
       this.$nextTick(() => {
@@ -234,7 +237,7 @@ export default {
         type: 'warning'
       }).then(() => {
         // 发送请求
-        request.get("/system/service/application/deleteById", {id: row.id})
+        request.get("/system-manage/service/application/deleteById", {id: row.id})
           .then(response => {
             this.$message({
               type: 'success',

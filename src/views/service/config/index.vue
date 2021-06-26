@@ -42,7 +42,7 @@
       <el-table-column label="操作" align="center" width="80" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button size="mini" type="info"
-                     v-permission="['SERVICE_APPLICATION_VIEW_PROFILE']" @click="viewProfile(row)">
+                     v-permission="['SERVICE_CONFIG_PROFILE_MANAGE']" @click="viewProfile(row)">
             环境
           </el-button>
         </template>
@@ -102,7 +102,7 @@ export default {
       this.listPage();
     },
     viewProfile(row) {
-
+      this.$router.push({path: '/service/profile', query: {profileId: row.id}});
     }
   }
 }
