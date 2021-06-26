@@ -102,7 +102,7 @@ export default {
       this.listPage();
     },
     viewProfile(row) {
-      this.$router.push({path: '/service/profile', query: {profileId: row.id}});
+      this.$router.push({path: '/service/profile', query: {applicationId: row.id, applicationName: row.appCode}});
     }
   }
 }

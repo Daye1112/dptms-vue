@@ -1,51 +1,56 @@
 <template>
   <div class="app-container">
-    <!--<div class="filter-container">-->
-      <!--<el-input v-model="listQuery.researchKey" placeholder="请输入应用编号或应用名称"-->
-                <!--size="small" class="filter-item"-->
-                <!--@keyup.enter.native="handleFilter"/>-->
-      <!--<el-button round size="small" class="filter-item"-->
-                 <!--type="primary" icon="el-icon-search" @click="handleFilter">-->
-        <!--查询-->
-      <!--</el-button>-->
-    <!--</div>-->
+    <el-row class="profile_container">
+      <el-col :span="4" class="profile_list">
+        <h3>{{this.currentApplicationName}}</h3>
+        <el-scrollbar wrap-class="scrollbar-wrapper">
+          <ul>
+            <li v-for="item in this.profileList" :class="currentProfileId === item.id ? 'is-active':''">
+              {{item.profileCode}}
+            </li>
+            <el-button class="add-profile-button" size="mini"
+                       v-permission="['SERVICE_CONFIG_PROFILE_INSERT']"
+                       @click="handleProfileAdd">+
+            </el-button>
+          </ul>
+        </el-scrollbar>
+      </el-col>
+      <el-col :span="20" class="profile_prop_list">
+        <el-button type="text" @click="$router.back(-1)">&lt;&nbsp;返回</el-button>
+      </el-col>
+    </el-row>
     <!--配置环境修改/新增弹窗-->
-    <!--<el-dialog-->
-      <!--v-el-drag-dialog-->
-      <!--:title="textMap[profileDialogStatus]"-->
-      <!--:visible.sync="profileDialogFormVisible"-->
-      <!--width="40%"-->
-    <!--&gt;-->
-      <!--<el-form-->
-        <!--ref="dataForm"-->
-        <!--:rules="profileRules"-->
-        <!--:model="profileTemp"-->
-        <!--size="small"-->
-        <!--label-position="left"-->
-        <!--label-width="70px"-->
-      <!--&gt;-->
-        <!--<el-form-item label="应用编号" prop="appCode">-->
-          <!--<el-input v-model="temp.appCode"/>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item label="应用名称" prop="appName">-->
-          <!--<el-input v-model="temp.appName"/>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item label="应用类型" prop="appType">-->
-          <!--<el-select v-model="temp.appType">-->
-            <!--<el-option key="" label="请选择" value=""/>-->
-            <!--<el-option v-for="item in appTypeMap" :key="item.key" :label="item.value" :value="item.key"/>-->
-          <!--</el-select>-->
-        <!--</el-form-item>-->
-      <!--</el-form>-->
-      <!--<div slot="footer" class="dialog-footer">-->
-        <!--<el-button round size="medium" @click="dialogFormVisible = false">-->
-          <!--取消-->
-        <!--</el-button>-->
-        <!--<el-button round size="medium" type="primary" @click="dialogStatus === 'create'? add() : update()">-->
-          <!--确定-->
-        <!--</el-button>-->
-      <!--</div>-->
-    <!--</el-dialog>-->
+    <el-dialog
+      v-el-drag-dialog
+      :title="textMap[dialogStatus]"
+      :visible.sync="profileDialogFormVisible"
+      width="40%"
+    >
+      <el-form
+        ref="profileDataForm"
+        :rules="profileRules"
+        :model="profileTemp"
+        size="small"
+        label-position="left"
+        label-width="80px"
+      >
+        <el-form-item label="环境编号" prop="profileCode">
+          <el-input v-model="profileTemp.profileCode"/>
+        </el-form-item>
+        <el-form-item label="环境名称" prop="profileName">
+          <el-input v-model="profileTemp.profileName"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button round size="medium" @click="profileDialogFormVisible = false">
+          取消
+        </el-button>
+        <el-button round size="medium" type="primary"
+                   @click="dialogStatus === 'create'? profileAdd() : profileUpdate()">
+          确定
+        </el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -77,7 +82,7 @@ export default {
       // 当前环境id
       currentProfileId: '',
       // 弹窗状态
-      profileDialogStatus: '',
+      dialogStatus: '',
       // 弹窗标题
       textMap: {
         update: '修改',
@@ -86,21 +91,33 @@ export default {
       // 临时环境信息
       profileTemp: {
         id: '',
-        orgId: '',
-        appCode: '',
-        appName: '',
-        appType: ''
+        applicationId: '',
+        profileCode: '',
+        profileName: ''
       },
       // 环境弹窗显示状态
       profileDialogFormVisible: false,
       profileRules: {
-        appCode: [{required: true, message: '请输入应用编号', trigger: 'blur'}],
-        appName: [{required: true, message: '请输入应用名称', trigger: 'blur'}],
-        appType: [{required: true, message: '请选择应用类型', trigger: 'blur'}],
+        profileCode: [{required: true, message: '请输入环境编号', trigger: 'blur'}],
+        profileName: [{required: true, message: '请输入环境名称', trigger: 'blur'}]
       },
     }
   },
+  computed: {
+    currentApplicationId() {
+      return this.$route.query.applicationId;
+    },
+    currentApplicationName() {
+      return this.$route.query.applicationName;
+    }
+  },
   created() {
+    // 获取应用id
+    this.profileListQuery.applicationId = this.currentApplicationId;
+    // 初始化数据
+    if (this.profileListQuery.applicationId) {
+      this.getProfileList();
+    }
   },
   methods: {
     handleFilter() {
@@ -110,7 +127,7 @@ export default {
       request.get("/system-manage/service/config/profile/list", this.profileListQuery)
         .then(response => {
           this.profileList = response.data;
-          if (this.profileList) {
+          if (this.profileList && this.profileList.size > 0) {
             this.currentProfileId = this.profileList[0].id;
           }
         });
@@ -122,10 +139,32 @@ export default {
         });
     },
     handleProfileAdd() {
-
+      let _this = this;
+      Object.getOwnPropertyNames(this.profileTemp).forEach(function (key) {
+        _this.profileTemp[key] = '';
+      });
+      // 当前组织id
+      this.profileTemp.applicationId = this.currentApplicationId;
+      this.dialogStatus = 'create';
+      this.profileDialogFormVisible = true;
+      this.$nextTick(() => {
+        this.$refs['profileDataForm'].clearValidate()
+      });
     },
     profileAdd() {
-
+      this.$refs['profileDataForm'].validate((valid) => {
+        if (valid) {
+          request.post("/system-manage/service/config/profile/insert", this.profileTemp)
+            .then(response => {
+              this.$message({
+                type: 'success',
+                message: '环境添加成功'
+              })
+              this.getProfileList();
+              this.profileDialogFormVisible = false
+            })
+        }
+      })
     },
     handleProfileUpdate() {
 
@@ -155,6 +194,57 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+  .app-container {
+    height: 100%;
 
+    .profile_container {
+      height: 100%;
+
+      .profile_list {
+        height: 100%;
+        border-right: 1px solid #cbcbcb;
+
+        .el-scrollbar {
+          height: 600px;
+        }
+
+        h3 {
+          margin: 10px 0;
+          border-left: 5px solid #43cbe3;
+          padding-left: 10px;
+        }
+
+        ul {
+          padding: 0 5px 0 0;
+
+          li {
+            cursor: pointer;
+            list-style-type: none;
+            height: 35px;
+            line-height: 35px;
+          }
+
+          li:hover, li:focus {
+            outline: none;
+            background-color: #e8f4ff;
+          }
+
+          .is-active {
+            color: #1890ff;
+          }
+        }
+
+        .add-profile-button {
+          border: 2px dotted lightblue;
+          width: 100%;
+        }
+      }
+
+      .profile_prop_list {
+        padding-left: 20px;
+
+      }
+    }
+  }
 </style>

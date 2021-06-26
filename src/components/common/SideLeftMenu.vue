@@ -27,7 +27,7 @@
         </div>
       </el-main>
       <el-footer class="footer">
-        <small>Copyright &copy; 2020-{{new Date().getFullYear()}} DPTMS-项目组管理系统</small>
+        <small>DPTMS-项目组管理系统 Copyright &copy; 2020-{{new Date().getFullYear()}} Mr.Darren</small>
       </el-footer>
     </el-container>
   </el-container>
