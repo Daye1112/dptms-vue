@@ -5,8 +5,20 @@
         <h3>{{this.currentApplicationName}}</h3>
         <el-scrollbar wrap-class="scrollbar-wrapper">
           <ul>
-            <li v-for="item in this.profileList" :class="currentProfileId === item.id ? 'is-active':''">
+            <li v-for="item in this.profileList"
+                @click="changeProfile(item)"
+                :class="currentProfileId === item.id ? 'is-active':''">
               {{item.profileCode}}
+              <el-button circle size="mini"
+                         v-permission="['SERVICE_CONFIG_PROFILE_DELETE']"
+                         @click="profileDelete(item)">
+                <i class="el-icon-delete"></i>
+              </el-button>
+              <el-button circle size="mini"
+                         v-permission="['SERVICE_CONFIG_PROFILE_UPDATE']"
+                         @click="handleProfileUpdate(item)">
+                <i class="el-icon-edit"></i>
+              </el-button>
             </li>
             <el-button class="add-profile-button" size="mini"
                        v-permission="['SERVICE_CONFIG_PROFILE_INSERT']"
@@ -79,8 +91,13 @@ export default {
       profileList: [],
       // 配置list
       propList: [],
-      // 当前环境id
-      currentProfileId: '',
+      // 当前环境
+      currentProfile: {
+        id: '',
+        applicationId: '',
+        profileName: '',
+        profileCode: ''
+      },
       // 弹窗状态
       dialogStatus: '',
       // 弹窗标题
@@ -109,6 +126,9 @@ export default {
     },
     currentApplicationName() {
       return this.$route.query.applicationName;
+    },
+    currentProfileId() {
+      return this.currentProfile.id;
     }
   },
   created() {
@@ -127,16 +147,20 @@ export default {
       request.get("/system-manage/service/config/profile/list", this.profileListQuery)
         .then(response => {
           this.profileList = response.data;
-          if (this.profileList && this.profileList.size > 0) {
-            this.currentProfileId = this.profileList[0].id;
+          if (this.profileList && this.profileList.length > 0) {
+            this.currentProfile = this.profileList[0];
+            this.getPropList();
           }
         });
     },
     getPropList() {
-      request.get("/system-manage/service/config/profile/prop/list", this.propListQuery)
-        .then(response => {
-          this.propList = response.data;
-        });
+      if (this.currentProfileId) {
+        this.propListQuery.profileId = this.currentProfileId;
+        request.get("/system-manage/service/config/profile/prop/list", this.propListQuery)
+          .then(response => {
+            this.propList = response.data;
+          });
+      }
     },
     handleProfileAdd() {
       let _this = this;
@@ -166,14 +190,53 @@ export default {
         }
       })
     },
-    handleProfileUpdate() {
-
+    handleProfileUpdate(row) {
+      this.profileTemp = Object.assign({}, row);
+      this.dialogStatus = 'update';
+      this.profileDialogFormVisible = true;
+      this.$nextTick(() => {
+        this.$refs['profileDataForm'].clearValidate();
+      });
     },
     profileUpdate() {
-
+      this.$refs['profileDataForm'].validate((valid) => {
+        if (valid) {
+          request.post("/system-manage/service/config/profile/update", this.profileTemp)
+            .then(response => {
+              this.$message({
+                type: 'success',
+                message: '环境更新成功'
+              });
+              if (this.profileTemp.id === this.currentProfile.id) {
+                this.currentProfile = this.profileTemp;
+              }
+              this.profileDialogFormVisible = false;
+            })
+        }
+      })
     },
-    profileDelete() {
+    profileDelete(row) {
+      this.$confirm('确定永久删除该环境, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 发送请求
+        request.get("/system-manage/service/config/profile/deleteById", {id: row.id})
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+            this.getProfileList();
+          })
+      }).catch(() => {
 
+      })
+    },
+    changeProfile(row) {
+      this.currentProfile = row;
+      this.getPropList();
     },
     handlePropAdd() {
 
@@ -223,6 +286,13 @@ export default {
             list-style-type: none;
             height: 35px;
             line-height: 35px;
+            padding-left: 5px;
+
+            button {
+              float: right;
+              margin: 3px;
+              border: 1px dotted lightblue;
+            }
           }
 
           li:hover, li:focus {
