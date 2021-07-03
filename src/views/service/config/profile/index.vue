@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-row class="profile_container">
-      <el-col :span="4" class="profile_list">
+      <el-col :span="6" class="profile_list">
         <h3>{{this.currentApplicationName}}</h3>
         <el-scrollbar wrap-class="scrollbar-wrapper">
           <ul>
@@ -27,8 +27,70 @@
           </ul>
         </el-scrollbar>
       </el-col>
-      <el-col :span="20" class="profile_prop_list">
+      <el-col :span="18" class="profile_prop_list">
         <el-button type="text" @click="$router.back(-1)">&lt;&nbsp;返回</el-button>
+        <div class="filter-container">
+          <el-input v-model="propListQuery.propKey" placeholder="请输入Key"
+                    size="small" class="filter-item"
+                    @keyup.enter.native="handleFilter"/>
+          <el-button round size="small" class="filter-item"
+                     type="primary" icon="el-icon-search" @click="handleFilter">
+            查询
+          </el-button>
+          <el-button round size="small" class="filter-item fr"
+                     type="success" icon="el-icon-plus"
+                     v-permission="['SERVICE_CONFIG_PROFILE_PROP_ADD']" @click="handlePropAdd">
+            添加
+          </el-button>
+        </div>
+        <el-table
+          v-loading="propListLoading"
+          :data="propList"
+          border
+          fit
+          size="small"
+          highlight-current-row
+          style="width: 100%;"
+        >
+          <el-table-column
+            label="序号"
+            type="index"
+            align="center"
+            width="50"
+          />
+          <el-table-column label="Key" prop="propKey" min-width="80" align="center" show-overflow-tooltip>
+            <template slot-scope="{row}">
+              <span>{{row.propKey}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="Value" prop="propValue" min-width="80" align="center" show-overflow-tooltip>
+            <template slot-scope="{row}">
+              <span>{{row.propValue}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="描述" prop="propDesc" min-width="80" align="center" show-overflow-tooltip>
+            <template slot-scope="{row}">
+              <span>{{row.propDesc}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="更新时间" prop="mtime" min-width="60" align="center">
+            <template slot-scope="{row}">
+              <span>{{row.mtime}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
+            <template slot-scope="{row}">
+              <el-button size="mini" type="primary"
+                         v-permission="['SERVICE_CONFIG_PROFILE_PROP_UPDATE']" @click="handlePropUpdate(row)">
+                修改
+              </el-button>
+              <el-button size="mini" type="danger"
+                         v-permission="['SERVICE_CONFIG_PROFILE_PROP_DELETE']" @click="propDelete(row)">
+                删除
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
       </el-col>
     </el-row>
     <!--配置环境修改/新增弹窗-->
@@ -63,6 +125,41 @@
         </el-button>
       </div>
     </el-dialog>
+    <!--配置环境属性修改/新增弹窗-->
+    <el-dialog
+      v-el-drag-dialog
+      :title="textMap[dialogStatus]"
+      :visible.sync="propDialogFormVisible"
+      width="40%"
+    >
+      <el-form
+        ref="propDataForm"
+        :rules="propRules"
+        :model="propTemp"
+        size="small"
+        label-position="left"
+        label-width="80px"
+      >
+        <el-form-item label="Key" prop="propKey">
+          <el-input v-model="propTemp.propKey"/>
+        </el-form-item>
+        <el-form-item label="Value" prop="propValue">
+          <el-input v-model="propTemp.propValue"/>
+        </el-form-item>
+        <el-form-item label="描述" prop="propDesc">
+          <el-input v-model="propTemp.propDesc"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button round size="medium" @click="propDialogFormVisible = false">
+          取消
+        </el-button>
+        <el-button round size="medium" type="primary"
+                   @click="dialogStatus === 'create'? propAdd() : propUpdate()">
+          确定
+        </el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -78,6 +175,7 @@ export default {
   directives: {waves, elDragDialog},
   data() {
     return {
+      propListLoading: false,
       // 环境查询条件
       profileListQuery: {
         applicationId: ''
@@ -85,7 +183,7 @@ export default {
       // 配置查询条件
       propListQuery: {
         profileId: '',
-        researchKey: ''
+        propKey: ''
       },
       // 环境list
       profileList: [],
@@ -110,13 +208,27 @@ export default {
         id: '',
         applicationId: '',
         profileCode: '',
-        profileName: ''
+        propDesc: ''
       },
       // 环境弹窗显示状态
       profileDialogFormVisible: false,
       profileRules: {
         profileCode: [{required: true, message: '请输入环境编号', trigger: 'blur'}],
         profileName: [{required: true, message: '请输入环境名称', trigger: 'blur'}]
+      },
+      // 临时属性信息
+      propTemp: {
+        id: '',
+        profileId: '',
+        propKey: '',
+        propValue: '',
+        profileName: ''
+      },
+      // 环境弹窗显示状态
+      propDialogFormVisible: false,
+      propRules: {
+        propKey: [{required: true, message: '请输入Key', trigger: 'blur'}],
+        propValue: [{required: true, message: '请输入Value', trigger: 'blur'}]
       },
     }
   },
@@ -141,7 +253,14 @@ export default {
   },
   methods: {
     handleFilter() {
-
+      if (!this.currentProfileId) {
+        this.$message({
+          type: 'warning',
+          message: '请选择环境'
+        });
+        return;
+      }
+      this.getPropList();
     },
     getProfileList() {
       request.get("/system-manage/service/config/profile/list", this.profileListQuery)
@@ -155,10 +274,12 @@ export default {
     },
     getPropList() {
       if (this.currentProfileId) {
+        this.propListLoading = true;
         this.propListQuery.profileId = this.currentProfileId;
         request.get("/system-manage/service/config/profile/prop/list", this.propListQuery)
           .then(response => {
             this.propList = response.data;
+            this.propListLoading = false;
           });
       }
     },
@@ -183,7 +304,7 @@ export default {
               this.$message({
                 type: 'success',
                 message: '环境添加成功'
-              })
+              });
               this.getProfileList();
               this.profileDialogFormVisible = false
             })
@@ -239,19 +360,77 @@ export default {
       this.getPropList();
     },
     handlePropAdd() {
-
+      if (!this.currentProfileId) {
+        this.$message({
+          type: 'warning',
+          message: '请选择环境'
+        });
+        return;
+      }
+      // 当前组织id
+      this.propTemp.profileId = this.currentProfileId;
+      this.dialogStatus = 'create';
+      this.propDialogFormVisible = true;
+      this.$nextTick(() => {
+        this.$refs['propDataForm'].clearValidate()
+      });
     },
     propAdd() {
-
+      this.$refs['propDataForm'].validate((valid) => {
+        if (valid) {
+          request.post("/system-manage/service/config/profile/prop/insert", this.propTemp)
+            .then(response => {
+              this.$message({
+                type: 'success',
+                message: '属性添加成功'
+              });
+              this.getPropList();
+              this.propDialogFormVisible = false;
+            })
+        }
+      })
     },
-    handlePropUpdate() {
-
+    handlePropUpdate(row) {
+      this.propTemp = Object.assign({}, row);
+      this.dialogStatus = 'update';
+      this.propDialogFormVisible = true;
+      this.$nextTick(() => {
+        this.$refs['propDataForm'].clearValidate();
+      });
     },
     propUpdate() {
-
+      this.$refs['propDataForm'].validate((valid) => {
+        if (valid) {
+          request.post("/system-manage/service/config/profile/prop/update", this.propTemp)
+            .then(response => {
+              this.$message({
+                type: 'success',
+                message: '属性更新成功'
+              });
+              this.getPropList();
+              this.propDialogFormVisible = false;
+            })
+        }
+      })
     },
-    propDelete() {
+    propDelete(row) {
+      this.$confirm('确定永久删除该属性, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 发送请求
+        request.get("/system-manage/service/config/profile/prop/deleteById", {id: row.id})
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+            this.getPropList();
+          })
+      }).catch(() => {
 
+      })
     }
   }
 }

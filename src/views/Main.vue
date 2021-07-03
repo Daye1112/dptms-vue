@@ -111,6 +111,7 @@ export default {
       display: flex;
       align-items: center;
       cursor: pointer;
+      padding-right: 20px;
 
       span {
         padding-left: 10px;
@@ -130,6 +131,7 @@ export default {
 
     .dropdown {
       height: 61px;
+      padding-right: 20px;
       .user-avatar {
         display: flex;
         float: right;

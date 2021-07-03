@@ -71,6 +71,7 @@ export default {
   directives: {waves, elDragDialog},
   data() {
     return {
+      listLoading: false,
       listQuery: {
         currentPage: 1,
         pageSize: 10,
