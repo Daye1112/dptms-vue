@@ -50,7 +50,7 @@
           <el-button round size="small" class="filter-item fr"
                      type="info" icon="el-icon-s-promotion"
                      v-permission="['SERVICE_CONFIG_RELEASE_MANAGE']" @click="viewRelease">
-            发布历史
+            发布记录
           </el-button>
         </div>
         <el-table
