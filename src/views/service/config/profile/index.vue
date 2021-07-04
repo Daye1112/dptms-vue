@@ -42,6 +42,16 @@
                      v-permission="['SERVICE_CONFIG_PROFILE_PROP_ADD']" @click="handlePropAdd">
             添加
           </el-button>
+          <el-button round size="small" class="filter-item fr"
+                     type="primary" icon="el-icon-s-promotion"
+                     v-permission="['SERVICE_CONFIG_RELEASE_ADD']" @click="handleRelease">
+            发布
+          </el-button>
+          <el-button round size="small" class="filter-item fr"
+                     type="info" icon="el-icon-s-promotion"
+                     v-permission="['SERVICE_CONFIG_RELEASE_MANAGE']" @click="viewRelease">
+            发布历史
+          </el-button>
         </div>
         <el-table
           v-loading="propListLoading"
@@ -431,6 +441,44 @@ export default {
       }).catch(() => {
 
       })
+    },
+    handleRelease() {
+      if (!this.currentProfileId) {
+        this.$message({
+          type: 'warning',
+          message: '请选择环境'
+        });
+        return;
+      }
+      this.$confirm('确定发布当前环境, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'success'
+      }).then(() => {
+        // 封装参数
+        let jsonParam = {
+          applicationId: this.currentApplicationId,
+          profileId: this.currentProfileId,
+          releaseType: 1
+        };
+        // 发送请求
+        request.post("/system-manage/service/config/release/insert", jsonParam)
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '发布成功!'
+            });
+            this.getPropList();
+          })
+      }).catch(() => {
+
+      })
+    },
+    viewRelease() {
+      this.$router.push({
+        path: '/service/release',
+        query: {applicationId: this.currentApplicationId, profileId: this.currentProfileId}
+      });
     }
   }
 }
