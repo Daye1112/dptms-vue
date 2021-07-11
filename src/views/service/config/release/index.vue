@@ -1,17 +1,18 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
+      <el-button type="text" @click="$router.back(-1)">&lt;&nbsp;返回</el-button>
       <!--<el-input v-model="listQuery.researchKey" placeholder="请输入应用编号或应用名称"-->
-                <!--size="small" class="filter-item"-->
-                <!--@keyup.enter.native="handleFilter"/>-->
+      <!--size="small" class="filter-item"-->
+      <!--@keyup.enter.native="handleFilter"/>-->
       <!--<el-button round size="small" class="filter-item"-->
-                 <!--type="primary" icon="el-icon-search" @click="handleFilter">-->
-        <!--查询-->
+      <!--type="primary" icon="el-icon-search" @click="handleFilter">-->
+      <!--查询-->
       <!--</el-button>-->
       <!--<el-button round size="small" class="filter-item fr"-->
-                 <!--type="primary" icon="el-icon-s-promotion"-->
-                 <!--v-permission="['SERVICE_CONFIG_RELEASE_MANAGE']" @click="viewRelease">-->
-        <!--对比-->
+      <!--type="primary" icon="el-icon-s-promotion"-->
+      <!--v-permission="['SERVICE_CONFIG_RELEASE_MANAGE']" @click="viewRelease">-->
+      <!--对比-->
       <!--</el-button>-->
     </div>
     <el-table
@@ -52,7 +53,7 @@
       <el-table-column label="操作" align="center" width="80" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button size="mini" type="info"
-                     v-permission="['SERVICE_CONFIG_PROFILE_MANAGE']" @click="viewProfile(row)">
+                     v-permission="['SERVICE_CONFIG_RELEASE_PROP_LIST']" @click="viewProp(row)">
             查看
           </el-button>
         </template>
@@ -66,6 +67,44 @@
       class="fr"
       @pagination="setPagination"
     />
+    <el-dialog
+      v-el-drag-dialog
+      title="详细配置 "
+      :visible.sync="propDialogFormVisible"
+      width="70%"
+    >
+      <el-table
+        v-loading="propListLoading"
+        :data="propList"
+        border
+        fit
+        size="small"
+        highlight-current-row
+        style="width: 100%;"
+      >
+        <el-table-column
+          label="序号"
+          type="index"
+          align="center"
+          width="50"
+        />
+        <el-table-column label="Key" prop="propKey" min-width="80" align="center" show-overflow-tooltip>
+          <template slot-scope="{row}">
+            <span>{{row.propKey}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="Value" prop="propValue" min-width="80" align="center" show-overflow-tooltip>
+          <template slot-scope="{row}">
+            <span>{{row.propValue}}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div slot="footer" class="dialog-footer">
+        <el-button round type="primary" size="medium" @click="propDialogFormVisible = false">
+          确定
+        </el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -82,13 +121,17 @@ export default {
   data() {
     return {
       listLoading: false,
+      propListLoading: false,
       listQuery: {
         currentPage: 1,
         pageSize: 10,
         applicationId: '',
         profileId: ''
       },
-      list: []
+      list: [],
+      propList: [],
+      total: 0,
+      propDialogFormVisible: false
     }
   },
   computed: {
@@ -122,6 +165,15 @@ export default {
     },
     handleFilter() {
 
+    },
+    viewProp(row) {
+      this.propDialogFormVisible = true;
+      this.propListLoading = true;
+      request.get("/system-manage/service/config/release/prop/list", {releaseId: row.id})
+        .then(response => {
+          this.propList = response.data;
+          this.propListLoading = false;
+        });
     }
   }
 }

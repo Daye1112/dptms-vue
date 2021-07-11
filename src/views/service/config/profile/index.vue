@@ -218,7 +218,7 @@ export default {
         id: '',
         applicationId: '',
         profileCode: '',
-        propDesc: ''
+        profileName: ''
       },
       // 环境弹窗显示状态
       profileDialogFormVisible: false,
@@ -232,7 +232,7 @@ export default {
         profileId: '',
         propKey: '',
         propValue: '',
-        profileName: ''
+        propDesc: ''
       },
       // 环境弹窗显示状态
       propDialogFormVisible: false,
@@ -316,7 +316,7 @@ export default {
                 message: '环境添加成功'
               });
               this.getProfileList();
-              this.profileDialogFormVisible = false
+              this.profileDialogFormVisible = false;
             })
         }
       })
@@ -377,6 +377,10 @@ export default {
         });
         return;
       }
+      let _this = this;
+      Object.getOwnPropertyNames(this.propTemp).forEach(function (key) {
+        _this.propTemp[key] = '';
+      });
       // 当前组织id
       this.propTemp.profileId = this.currentProfileId;
       this.dialogStatus = 'create';
