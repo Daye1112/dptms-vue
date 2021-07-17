@@ -50,11 +50,15 @@
           <span>{{row.mtime}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="80" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button size="mini" type="info"
                      v-permission="['SERVICE_CONFIG_RELEASE_PROP_LIST']" @click="viewProp(row)">
             查看
+          </el-button>
+          <el-button size="mini" type="danger"
+                     v-permission="['SERVICE_CONFIG_RELEASE_DELETE']" @click="handleDelete(row)">
+            删除
           </el-button>
         </template>
       </el-table-column>
@@ -96,6 +100,11 @@
         <el-table-column label="Value" prop="propValue" min-width="80" align="center" show-overflow-tooltip>
           <template slot-scope="{row}">
             <span>{{row.propValue}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="描述" prop="propDesc" min-width="80" align="center" show-overflow-tooltip>
+          <template slot-scope="{row}">
+            <span>{{row.propDesc}}</span>
           </template>
         </el-table-column>
       </el-table>
@@ -174,7 +183,26 @@ export default {
           this.propList = response.data;
           this.propListLoading = false;
         });
-    }
+    },
+    handleDelete(row) {
+      this.$confirm('确定永久删除该发布信息, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 发送请求
+        request.get("/system-manage/service/config/release/deleteById", {id: row.id})
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+            this.listPage();
+          })
+      }).catch(() => {
+
+      })
+    },
   }
 }
 </script>
