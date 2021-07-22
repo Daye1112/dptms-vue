@@ -322,7 +322,7 @@ export default {
 
 <style lang="scss" scoped>
   .menu-tree {
-    height: 300px;
+    height: 400px;
 
     .el-scrollbar {
       height: 100%;

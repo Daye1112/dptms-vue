@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-row class="profile_container">
-      <el-col :span="6" class="profile_list">
+      <el-col :span="5" class="profile_list">
         <h3>{{this.currentApplicationName}}</h3>
         <el-scrollbar wrap-class="scrollbar-wrapper">
           <ul>
@@ -27,7 +27,7 @@
           </ul>
         </el-scrollbar>
       </el-col>
-      <el-col :span="18" class="profile_prop_list">
+      <el-col :span="19" class="profile_prop_list">
         <el-button type="text" @click="$router.back(-1)">&lt;&nbsp;返回</el-button>
         <div class="filter-container">
           <el-input v-model="propListQuery.propKey" placeholder="请输入Key"
@@ -41,6 +41,11 @@
                      type="success" icon="el-icon-plus"
                      v-permission="['SERVICE_CONFIG_PROFILE_PROP_ADD']" @click="handlePropAdd">
             添加
+          </el-button>
+          <el-button round size="small" class="filter-item fr"
+                     type="success" icon="el-icon-plus"
+                     v-permission="['SERVICE_CONFIG_PROFILE_PROP_BATCH_ADD']" @click="handlePropBatchAdd">
+            批量添加
           </el-button>
           <el-button round size="small" class="filter-item fr"
                      type="primary" icon="el-icon-s-promotion"
@@ -73,12 +78,12 @@
               <span>{{row.propKey}}</span>
             </template>
           </el-table-column>
-          <el-table-column label="Value" prop="propValue" min-width="80" align="center" show-overflow-tooltip>
+          <el-table-column label="Value" prop="propValue" min-width="100" align="center" show-overflow-tooltip>
             <template slot-scope="{row}">
               <span>{{row.propValue}}</span>
             </template>
           </el-table-column>
-          <el-table-column label="描述" prop="propDesc" min-width="80" align="center" show-overflow-tooltip>
+          <el-table-column label="描述" prop="propDesc" min-width="60" align="center" show-overflow-tooltip>
             <template slot-scope="{row}">
               <span>{{row.propDesc}}</span>
             </template>
@@ -170,6 +175,34 @@
         </el-button>
       </div>
     </el-dialog>
+    <!--配置环境属性批量新增弹窗-->
+    <el-dialog
+      v-el-drag-dialog
+      title="批量新增"
+      :visible.sync="propBatchDialogFormVisible"
+      width="40%"
+    >
+      <el-form
+        ref="propBatchDataForm"
+        :rules="propBatchRules"
+        :model="propBatchTemp"
+        size="small"
+      >
+        <el-form-item prop="contentTemp">
+          <el-input placeholder="请输入内容" type="textarea" rows="10"
+                    v-model="propBatchTemp.contentTemp"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button round size="medium" @click="propBatchDialogFormVisible = false">
+          取消
+        </el-button>
+        <el-button round size="medium" type="primary"
+                   @click="propBatchAdd()">
+          确定
+        </el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -234,11 +267,22 @@ export default {
         propValue: '',
         propDesc: ''
       },
-      // 环境弹窗显示状态
+      // 环境属性弹窗显示状态
       propDialogFormVisible: false,
       propRules: {
         propKey: [{required: true, message: '请输入Key', trigger: 'blur'}],
         propValue: [{required: true, message: '请输入Value', trigger: 'blur'}]
+      },
+      // 临时属性批量导入信息
+      propBatchTemp: {
+        profileId: '',
+        content: '',
+        contentTemp: ''
+      },
+      // 环境属性批量新增弹窗显示状态
+      propBatchDialogFormVisible: false,
+      propBatchRules: {
+        contentTemp: [{required: true, message: '请输入内容', trigger: 'blur'}]
       },
     }
   },
@@ -483,6 +527,34 @@ export default {
         path: '/service/release',
         query: {applicationId: this.currentApplicationId, profileId: this.currentProfileId}
       });
+    },
+    handlePropBatchAdd() {
+      let _this = this;
+      Object.getOwnPropertyNames(this.propBatchTemp).forEach(function (key) {
+        _this.propBatchTemp[key] = '';
+      });
+      // 当前组织id
+      this.propBatchTemp.profileId = this.currentProfileId;
+      this.propBatchDialogFormVisible = true;
+      this.$nextTick(() => {
+        this.$refs['propBatchDataForm'].clearValidate()
+      });
+    },
+    propBatchAdd() {
+      this.$refs['propBatchDataForm'].validate((valid) => {
+        if (valid) {
+          this.propBatchTemp.content = encodeURIComponent(this.propBatchTemp.contentTemp);
+          request.post("/system-manage/service/config/profile/prop/batchInsert", this.propBatchTemp)
+            .then(response => {
+              this.$message({
+                type: 'success',
+                message: '属性批量添加成功'
+              });
+              this.getPropList();
+              this.propBatchDialogFormVisible = false;
+            })
+        }
+      })
     }
   }
 }
