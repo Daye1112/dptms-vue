@@ -60,11 +60,10 @@
         :total="total"
         :page.sync="listQuery.currentPage"
         :limit.sync="listQuery.pageSize"
-        class="fr"
+        class="pagination-fr"
         @pagination="setPagination"
       />
     </div>
-  </div>
 </template>
 
 <script>

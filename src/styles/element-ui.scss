@@ -22,7 +22,7 @@
   left: 0;
   position: relative;
   margin: 0 auto;
-  border-radius: 10px!important;
+  border-radius: 10px !important;
 }
 
 // refine element ui upload
@@ -58,4 +58,10 @@
   .el-button + .el-button {
     margin-left: 0 !important;
   }
+}
+
+.pagination-fr {
+  padding: 0 !important;
+  margin-top: 10px !important;
+  text-align: right;
 }
