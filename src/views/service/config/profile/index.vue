@@ -29,6 +29,7 @@
       </el-col>
       <el-col :span="19" class="profile_prop_list">
         <el-button type="text" @click="$router.back(-1)">&lt;&nbsp;返回</el-button>
+        <h3>{{this.currentProfile.profileCode}}&nbsp;{{this.currentProfile.profileName}}</h3>
         <div class="filter-container">
           <el-input v-model="propListQuery.propKey" placeholder="请输入Key"
                     size="small" class="filter-item"
@@ -46,6 +47,11 @@
                      type="success" icon="el-icon-plus"
                      v-permission="['SERVICE_CONFIG_PROFILE_PROP_BATCH_ADD']" @click="handlePropBatchAdd">
             批量添加
+          </el-button>
+          <el-button round size="small" class="filter-item fr"
+                     type="info" icon="el-icon-document"
+                     v-permission="['SERVICE_CONFIG_PROFILE_MANAGE']" @click="handlePropView">
+            文本
           </el-button>
           <el-button round size="small" class="filter-item fr"
                      type="primary" icon="el-icon-s-promotion"
@@ -178,13 +184,12 @@
     <!--配置环境属性批量新增弹窗-->
     <el-dialog
       v-el-drag-dialog
-      title="批量新增"
+      :title="textMap[dialogStatus]"
       :visible.sync="propBatchDialogFormVisible"
       width="40%"
     >
       <el-form
         ref="propBatchDataForm"
-        :rules="propBatchRules"
         :model="propBatchTemp"
         size="small"
       >
@@ -198,7 +203,7 @@
           取消
         </el-button>
         <el-button round size="medium" type="primary"
-                   @click="propBatchAdd()">
+                   @click="dialogStatus === 'batchCreate'? propBatchAdd() : propView()">
           确定
         </el-button>
       </div>
@@ -244,7 +249,9 @@ export default {
       // 弹窗标题
       textMap: {
         update: '修改',
-        create: '添加'
+        create: '添加',
+        view: '查看',
+        batchCreate: '批量新增'
       },
       // 临时环境信息
       profileTemp: {
@@ -280,10 +287,7 @@ export default {
         contentTemp: ''
       },
       // 环境属性批量新增弹窗显示状态
-      propBatchDialogFormVisible: false,
-      propBatchRules: {
-        contentTemp: [{required: true, message: '请输入内容', trigger: 'blur'}]
-      },
+      propBatchDialogFormVisible: false
     }
   },
   computed: {
@@ -535,6 +539,7 @@ export default {
       });
       // 当前组织id
       this.propBatchTemp.profileId = this.currentProfileId;
+      this.dialogStatus = 'batchCreate';
       this.propBatchDialogFormVisible = true;
       this.$nextTick(() => {
         this.$refs['propBatchDataForm'].clearValidate()
@@ -555,6 +560,25 @@ export default {
             })
         }
       })
+    },
+    handlePropView(){
+      let _this = this;
+      Object.getOwnPropertyNames(this.propBatchTemp).forEach(function (key) {
+        _this.propBatchTemp[key] = '';
+      });
+      this.dialogStatus = 'view';
+      this.propBatchDialogFormVisible = true;
+      this.$nextTick(() => {
+        this.$refs['propBatchDataForm'].clearValidate()
+      });
+      if(this.propList && this.propList.length > 0){
+        for (const prop of this.propList) {
+          this.propBatchTemp.contentTemp += prop.propKey + "=" + prop.propValue + "\n";
+        }
+      }
+    },
+    propView() {
+      this.propBatchDialogFormVisible = false;
     }
   }
 }
@@ -616,7 +640,11 @@ export default {
 
       .profile_prop_list {
         padding-left: 20px;
-
+        h3 {
+          margin: 10px 0;
+          border-left: 5px solid #43cbe3;
+          padding-left: 10px;
+        }
       }
     }
   }
