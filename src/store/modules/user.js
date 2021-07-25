@@ -1,5 +1,6 @@
 import request from '@/utils/request'
 import { removeRefreshToken, removeAccessToken, removeVuex } from '@/utils/auth'
+import store from "@/store/index";
 
 const getDefaultState = () => {
   return {
@@ -33,8 +34,9 @@ const actions = {
       request.post("/auth/login", userInfo)
         .then(response => {
           // 获取用户信息
-          commit('SET_USER_INFO', response.data);
-          resolve();
+          const { data } = response;
+          commit('SET_USER_INFO', data);
+          resolve(data);
         })
         .catch(error => {
           reject(error)
@@ -46,8 +48,9 @@ const actions = {
       request.get("/auth/activeUser/getInfo")
         .then(response => {
           // 获取用户信息
-          commit('SET_USER_INFO', response.data);
-          resolve();
+          const { data } = response;
+          commit('SET_USER_INFO', data);
+          resolve(data);
         })
         .catch(error => {
           reject(error)
@@ -58,12 +61,13 @@ const actions = {
     return new Promise((resolve, reject) => {
       request.get("/auth/activeUser/listMenu")
         .then(response => {
-          let menuList = response.data;
+          const { data } = response;
+          let menuList = data;
           let menuCodeList = menuList.map(item => item.menuCode);
           // 获取用户的菜单权限
           commit('SET_MENU_LIST', menuList);
           commit('SET_MENU_CODE_LIST', menuCodeList);
-          resolve();
+          resolve(data);
         })
         .catch(error => {
           reject(error)
@@ -83,9 +87,10 @@ const actions = {
     return new Promise((resolve, reject) => {
       request.get("/auth/logout")
         .then(() => {
-          commit('RESET_STATE')
-          removeVuex() // 删除sessionStorage
-          resolve()
+          commit('RESET_STATE');
+          // 删除sessionStorage
+          removeVuex();
+          resolve();
         })
         .catch(error => {
           reject(error)

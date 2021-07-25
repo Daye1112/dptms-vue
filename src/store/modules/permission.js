@@ -41,17 +41,24 @@ export function filterAsyncRoutes(node, menuCodeList) {
   }
 }
 
-const state = {
-  allRoutes: [],
-  mainChildrenRoutes: [],
-  mainRoutes: []
+const getDefaultState = () => {
+  return {
+    allRoutes: [],
+    mainChildrenRoutes: [],
+    mainRoutes: []
+  }
 }
+
+const state = getDefaultState();
 
 const mutations = {
   SET_ROUTES: (state, routes) => {
     state.mainRoutes = routes;
     state.mainChildrenRoutes = routes[0].children;
     state.allRoutes = constantRoutes.concat(routes);
+  },
+  RESET_STATE: (state) => {
+    Object.assign(state, getDefaultState());
   }
 }
 
@@ -76,6 +83,9 @@ const actions = {
       commit('SET_ROUTES', mainRoutes);
       resolve(mainRoutes);
     })
+  },
+  resetState({commit}) {
+    commit('RESET_STATE');
   }
 }
 

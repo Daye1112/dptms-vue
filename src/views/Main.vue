@@ -93,7 +93,8 @@ export default {
       this.$router.push({name: name});
     },
     async logout() {
-      await this.$store.dispatch('user/logout')
+      await this.$store.dispatch('user/logout');
+      await this.$store.dispatch('permission/resetState');
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     }
   }

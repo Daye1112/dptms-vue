@@ -35,7 +35,7 @@ router.beforeEach(async (to, from, next) => {
           await Promise.all([
             store.dispatch('user/getInfo'),
             store.dispatch('user/getMenuList')
-          ])
+          ]);
           const menuCodeList = store.getters.menuCodeList;
           // 生成路由
           store.dispatch('permission/generateRoutes', menuCodeList)
