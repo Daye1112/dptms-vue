@@ -42,12 +42,12 @@
         </span>
       </el-form-item>
 
-      <el-form-item prop="code" class="code-input">
+      <el-form-item prop="captchaCode" class="code-input">
         <span class="svg-container">
           <svg-icon icon-class="verify-code"/>
         </span>
         <el-input
-          v-model="loginForm.code"
+          v-model="loginForm.captchaCode"
           placeholder="验证码"
           name="code"
           type="text"
@@ -55,7 +55,7 @@
           @keyup.enter.native="handleLogin"
         />
       </el-form-item>
-      <!--<img :src="code.img" alt="" class="code-image" @click="getcode">-->
+      <img :src="img" alt="" class="code-image" @click="getCaptcha">
 
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;"
                  @click.native.prevent="handleLogin">登 录
@@ -67,7 +67,9 @@
 
 <script>
 
-import { mapActions } from 'vuex'
+import {mapActions} from 'vuex'
+import request from '@/utils/request'
+
 export default {
   name: 'Login',
   components: {},
@@ -76,11 +78,15 @@ export default {
       loginForm: {
         username: '',
         password: '',
-        loginType: 1
+        loginType: 1,
+        captchaCode: '',
+        captchaKey: ''
       },
+      img:'',
       loginRules: {
         username: [{required: true, trigger: 'blur', message: '请输入用户名'}],
-        password: [{required: true, trigger: 'blur', message: '请输入密码'}]
+        password: [{required: true, trigger: 'blur', message: '请输入密码'}],
+        captchaCode: [{required: true, trigger: 'blur', message: '请输入密码'}],
       },
       passwordType: 'password',
       loading: false
@@ -88,6 +94,7 @@ export default {
   },
   watch: {},
   created() {
+    this.getCaptcha();
   },
   mounted() {
   },
@@ -95,6 +102,14 @@ export default {
     ...mapActions({
       'login': 'user/login'
     }),
+    getCaptcha() {
+      request.get("/auth/captcha")
+        .then(response => {
+          let data = response.data;
+          this.loginForm.captchaKey = data.captchaKey;
+          this.img = data.base64;
+        })
+    },
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -108,12 +123,14 @@ export default {
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
-          this.loading = true
-          this.login({ ...this.loginForm})
+          this.loading = true;
+          this.login({...this.loginForm})
             .then(() => {
-              this.loading = false
-              this.$router.push({ path: '/' })
-            }).catch((error) => {
+              this.loading = false;
+              this.$router.push({path: '/'})
+            })
+            .catch((error) => {
+            this.getCaptcha();
             this.loading = false
           })
         }
