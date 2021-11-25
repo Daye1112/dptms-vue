@@ -35,16 +35,19 @@
               <span class="user-name">{{userInfo.username}}</span>
             </div>
             <el-dropdown-menu slot="dropdown">
-              <router-link to="/">
+              <router-link to="/profile/index">
                 <el-dropdown-item>
-                  个人信息
+                  <span style="display:block;">
+                    <svg-icon icon-class="profile"/>
+                    个人中心
+                  </span>
                 </el-dropdown-item>
               </router-link>
               <el-dropdown-item divided @click.native="logout">
-            <span style="display:block;">
-              <svg-icon icon-class="logout"/>
-              退出
-            </span>
+                <span style="display:block;">
+                  <svg-icon icon-class="logout"/>
+                  退出
+                </span>
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -133,6 +136,7 @@ export default {
     .dropdown {
       height: 61px;
       padding-right: 20px;
+
       .user-avatar {
         display: flex;
         float: right;
@@ -146,7 +150,8 @@ export default {
           width: 32px;
           height: 32px;
         }
-        span{
+
+        span {
           padding: 0 10px 0 5px;
         }
       }

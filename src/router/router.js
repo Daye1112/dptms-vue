@@ -26,6 +26,20 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path: '/profile',
+    component: Main,
+    redirect: '/profile/index',
+    hidden: true,
+    children: [
+      {
+        path: 'index',
+        name: 'profile',
+        component: (resolve) => require(['@/views/profile'], resolve),
+        meta: { title: '个人中心' }
+      }
+    ]
+  },
+  {
     path: '/404',
     name: 'Page404',
     component: () => import('@/views/error/404'),
