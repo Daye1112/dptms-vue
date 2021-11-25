@@ -107,7 +107,7 @@
         :rules="rules"
         :model="temp"
         size="small"
-        label-position="left"
+        label-position="right"
         label-width="70px"
       >
         <el-form-item label="用户名" prop="username">

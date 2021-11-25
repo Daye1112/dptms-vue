@@ -1,6 +1,5 @@
 import request from '@/utils/request'
-import { removeRefreshToken, removeAccessToken, removeVuex } from '@/utils/auth'
-import store from "@/store/index";
+import {removeAccessToken, removeRefreshToken, removeVuex} from '@/utils/auth'
 
 const getDefaultState = () => {
   return {
@@ -34,7 +33,7 @@ const actions = {
       request.post("/auth/login", userInfo)
         .then(response => {
           // 获取用户信息
-          const { data } = response;
+          const {data} = response;
           commit('SET_USER_INFO', data);
           resolve(data);
         })
@@ -48,7 +47,7 @@ const actions = {
       request.get("/auth/activeUser/getInfo")
         .then(response => {
           // 获取用户信息
-          const { data } = response;
+          const {data} = response;
           commit('SET_USER_INFO', data);
           resolve(data);
         })
@@ -61,7 +60,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       request.get("/auth/activeUser/listMenu")
         .then(response => {
-          const { data } = response;
+          const {data} = response;
           let menuList = data;
           let menuCodeList = menuList.map(item => item.menuCode);
           // 获取用户的菜单权限
@@ -74,7 +73,7 @@ const actions = {
         })
     })
   },
-  resetToken({ commit }) {
+  resetToken({commit}) {
     return new Promise(resolve => {
       // 移除token
       removeAccessToken();
@@ -83,7 +82,7 @@ const actions = {
       resolve();
     })
   },
-  logout({ commit }) {
+  logout({commit}) {
     return new Promise((resolve, reject) => {
       request.get("/auth/logout")
         .then(() => {

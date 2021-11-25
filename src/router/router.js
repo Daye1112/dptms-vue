@@ -16,6 +16,19 @@ export const constantRoutes = [
         name: 'home',
         component: (resolve) => require(['@/views/home'], resolve),
         meta: {title: '首页'}
+      },
+      {
+        path: 'profile',
+        redirect: '/profile/index',
+        component: (resolve) => require(['@/views/profile/Main'], resolve),
+        children: [
+          {
+            path: 'index',
+            name: 'profile',
+            component: (resolve) => require(['@/views/profile/index'], resolve),
+            meta: { title: '个人中心' }
+          }
+        ]
       }
     ]
   },
@@ -24,20 +37,6 @@ export const constantRoutes = [
     name: 'login',
     component: (resolve) => require(['@/views/login'], resolve),
     hidden: true
-  },
-  {
-    path: '/profile',
-    component: Main,
-    redirect: '/profile/index',
-    hidden: true,
-    children: [
-      {
-        path: 'index',
-        name: 'profile',
-        component: (resolve) => require(['@/views/profile'], resolve),
-        meta: { title: '个人中心' }
-      }
-    ]
   },
   {
     path: '/404',

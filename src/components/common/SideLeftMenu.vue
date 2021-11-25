@@ -18,24 +18,16 @@
         </el-menu>
       </el-scrollbar>
     </el-aside>
-    <el-container>
-      <el-main class="main-container">
-        <div class="main-content">
-          <keep-alive :include="keepAliveList">
-            <router-view/>
-          </keep-alive>
-        </div>
-      </el-main>
-      <el-footer class="footer">
-        <small>DPTMS-项目组管理系统 Copyright &copy; 2020-{{new Date().getFullYear()}} Mr.Darren</small>
-      </el-footer>
-    </el-container>
+    <app-main :keepAliveList="keepAliveList"/>
   </el-container>
 </template>
 
 <script>
+import AppMain from "./AppMain"
+
 export default {
   name: "SideLeftMenu",
+  components: {AppMain},
   props: ['keepAliveList'],
   data() {
     return {
