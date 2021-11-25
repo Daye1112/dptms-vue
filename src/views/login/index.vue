@@ -86,7 +86,7 @@ export default {
       loginRules: {
         username: [{required: true, trigger: 'blur', message: '请输入用户名'}],
         password: [{required: true, trigger: 'blur', message: '请输入密码'}],
-        captchaCode: [{required: true, trigger: 'blur', message: '请输入密码'}],
+        captchaCode: [{required: true, trigger: 'blur', message: '请输入验证码'}],
       },
       passwordType: 'password',
       loading: false
