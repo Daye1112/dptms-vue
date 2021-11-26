@@ -7,12 +7,13 @@
       <el-col :span="16" :xs="24">
         <el-card>
           <el-tabs v-model="activeTab">
-            <el-tab-pane label="登录记录" name="account">
+            <el-tab-pane label="登录记录" name="timeline">
             </el-tab-pane>
-            <el-tab-pane label="账号信息" name="timeline">
+            <el-tab-pane label="账号信息" name="account">
               <user-info/>
             </el-tab-pane>
             <el-tab-pane label="个人密码" name="password">
+              <password/>
             </el-tab-pane>
           </el-tabs>
         </el-card>
@@ -24,12 +25,15 @@
 <script>
 import UserCard from './components/UserCard'
 import UserInfo from "./components/UserInfo";
+import Password from "./components/Password";
 
 export default {
   name: "Profile",
-  components: {UserInfo, UserCard},
+  components: {Password, UserInfo, UserCard},
   data() {
-    return {}
+    return {
+      activeTab: 'timeline'
+    }
   },
   created() {
   }

@@ -14,7 +14,7 @@
       <div class="box-center">
         <div class="user-name text-center">{{ userInfo.realName }}</div>
         <div class="user-role text-center text-muted">
-          <span>暂未开发</span>
+          <span>{{ userInfo.username }}</span>
         </div>
       </div>
     </div>
