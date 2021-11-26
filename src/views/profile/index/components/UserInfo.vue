@@ -25,7 +25,7 @@
       <el-input v-model="userTemp.email"/>
     </el-form-item>
     <el-form-item style="text-align: right">
-      <el-button round size="medium" type="primary"  @click="changeUserInfo()">
+      <el-button round size="medium" type="primary" @click="changeUserInfo()">
         提交
       </el-button>
     </el-form-item>
@@ -34,6 +34,8 @@
 
 <script>
 import {mapGetters} from 'vuex'
+import request from '@/utils/request'
+import store from '@/store'
 
 export default {
   name: "UserInfo",
@@ -65,7 +67,26 @@ export default {
   },
   methods: {
     changeUserInfo() {
+      this.$confirm('确定更新信息?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$refs['dataForm'].validate((valid) => {
+          if (valid) {
+            request.post("/auth/activeUser/updateInfo", this.userTemp)
+              .then(response => {
+                store.dispatch('user/getInfo');
+                this.$message({
+                  type: 'success',
+                  message: '用户更新成功'
+                });
+              })
+          }
+        })
+      }).catch(() => {
 
+      })
     }
   }
 }

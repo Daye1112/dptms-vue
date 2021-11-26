@@ -7,16 +7,16 @@
            label-width="80px"
   >
     <el-form-item label="旧密码" prop="oldPassword">
-      <el-input v-model="userTemp.oldPassword"/>
+      <el-input type="password" v-model="userTemp.oldPassword"/>
     </el-form-item>
     <el-form-item label="新密码" prop="newPassword">
-      <el-input v-model="userTemp.newPassword"/>
+      <el-input type="password" v-model="userTemp.newPassword"/>
     </el-form-item>
     <el-form-item label="再次确认" prop="confirmPassword">
-      <el-input v-model="userTemp.confirmPassword"/>
+      <el-input type="password" v-model="userTemp.confirmPassword"/>
     </el-form-item>
     <el-form-item style="text-align: right">
-      <el-button round size="medium" type="primary"  @click="changePassword()">
+      <el-button round size="medium" type="primary" @click="changePassword()">
         提交
       </el-button>
     </el-form-item>
@@ -24,6 +24,9 @@
 </template>
 
 <script>
+import request from '@/utils/request'
+import store from '@/store'
+
 export default {
   name: "Password",
   data() {
@@ -36,13 +39,45 @@ export default {
       rules: {
         oldPassword: [{required: true, message: '请输入旧密码', trigger: 'blur'}],
         newPassword: [{required: true, message: '请输入新密码', trigger: 'blur'}],
-        confirmPassword: [{required: true, message: '请再次确认密码', trigger: 'blur'}]
+        confirmPassword: [{required: true, message: '请再次确认密码', trigger: 'blur'},
+          {
+            validator: (rule, value, callback) => {
+              if (this.userTemp.newPassword !== value) {
+                callback("两次密码输入不一致");
+              } else {
+                callback();
+              }
+            }, trigger: 'blur'
+          }]
       },
     }
   },
   methods: {
     changePassword() {
+      this.$confirm('确定更新密码?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$refs.dataForm.validate((valid) => {
+          if (valid) {
+            request.post('auth/activeUser/updatePassword', this.userTemp)
+              .then(() => {
+                this.$message({
+                  message: '密码更新成功',
+                  type: 'success'
+                })
+                store.dispatch('user/getInfo');
+                this.$refs.dataForm.clearValidate();
+                this.$refs.dataForm.resetFields();
+              })
+          } else {
+            return false
+          }
+        })
+      }).catch(() => {
 
+      })
     }
   }
 }
