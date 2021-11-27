@@ -14,6 +14,7 @@ import '@/icons' // icon
 import '@/router/permission'
 import common from "@/assets/js/common"
 import permission from "@/directive/permission"
+import request from '@/utils/request'
 
 // set ElementUI lang to EN
 // Vue.use(ElementUI, { locale })
@@ -21,6 +22,8 @@ import permission from "@/directive/permission"
 Vue.use(ElementUI);
 Vue.use(common);
 Vue.use(permission);
+
+Vue.prototype.$request = request
 
 Vue.config.productionTip = false
 

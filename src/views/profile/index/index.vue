@@ -8,6 +8,7 @@
         <el-card>
           <el-tabs v-model="activeTab">
             <el-tab-pane label="登录记录" name="timeline">
+              <timeline/>
             </el-tab-pane>
             <el-tab-pane label="账号信息" name="account">
               <user-info/>
@@ -26,10 +27,11 @@
 import UserCard from './components/UserCard'
 import UserInfo from "./components/UserInfo";
 import Password from "./components/Password";
+import Timeline from "@/views/profile/index/components/Timeline";
 
 export default {
   name: "Profile",
-  components: {Password, UserInfo, UserCard},
+  components: {Timeline, Password, UserInfo, UserCard},
   data() {
     return {
       activeTab: 'timeline'
