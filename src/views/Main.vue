@@ -31,7 +31,7 @@
         <el-col :span="4" class="right-menu">
           <el-dropdown trigger="click" class="dropdown">
             <div class="user-avatar">
-              <img :src="defaultAvatar">
+              <img :src="userInfo.fileUrl ? userInfo.fileUrl : defaultAvatar"/>
               <span class="user-name">{{userInfo.username}}</span>
             </div>
             <el-dropdown-menu slot="dropdown">
@@ -67,12 +67,12 @@ import defaultAvatar from '@/assets/images/default_avatar.gif'
 
 export default {
   name: "Main",
+  components: {defaultAvatar},
   data() {
     return {
       isRouterAlive: true,
       logoSrc: logo,
       activeRouter: '',
-      defaultAvatar: defaultAvatar
     }
   },
   computed: {

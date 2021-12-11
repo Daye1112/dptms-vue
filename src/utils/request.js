@@ -86,9 +86,14 @@ const request = {
       _params = _params.substring(0, _params.length - 1);
     }
     return service.get(`${url}${_params}`)
+  },
+  upload(url, params) {
+    return service.post(url, params, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
   }
 }
 
 export default request
-export const {get: axiosGet} = request
-export const {post: axiosPost} = request

@@ -1,4 +1,3 @@
-import {axiosPost} from '@/utils/request'
 
 const getDefaultState = () => {
   return {

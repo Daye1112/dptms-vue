@@ -5,11 +5,15 @@
     </div>
     <div class="user-profile">
       <div class="box-center">
-        <pan-thumb :image="defaultAvatar" :height="'100px'" :width="'100px'" :hoverable="false">
-          <el-link type="primary" :underline="false" class="change-avatar" @click="dialogVisible = true">
-            更换头像
-          </el-link>
-        </pan-thumb>
+        <div class="user-avatar">
+          <img :src="userInfo.fileUrl ? userInfo.fileUrl : defaultAvatar"/>
+          <div class="user-name text-center">
+            <el-link type="primary" :underline="false" @click="uploadHeadImg">
+              更换头像
+            </el-link>
+            <input type="file" accept="image/*" class="hiddenInput" @change="handleFile">
+          </div>
+        </div>
       </div>
       <div class="box-center">
         <div class="user-name text-center">{{ userInfo.realName }}</div>
@@ -35,13 +39,13 @@
 
 <script>
 
-import PanThumb from '@/components/PanThumb'
 import {mapGetters} from 'vuex'
 import defaultAvatar from '@/assets/images/default_avatar.gif'
+import {fileUpload} from "@/utils/file"
 
 export default {
   name: "UserCard",
-  components: {PanThumb},
+  components: {defaultAvatar},
   computed: {
     ...mapGetters([
       'userInfo'
@@ -53,10 +57,23 @@ export default {
       page: {
         width: window.screen.width * 0.5,
         height: window.screen.height * 0.5
-      },
-      defaultAvatar: defaultAvatar
+      }
     }
   },
+  created() {
+  },
+  methods: {
+    uploadHeadImg() {
+      this.$el.querySelector('.hiddenInput').click();
+    },
+    handleFile(e) {
+      const $target = e.target || e.srcElement
+      const file = $target.files[0]
+      fileUpload(file).then(res => {
+        console.log(res);
+      });
+    }
+  }
 }
 </script>
 
@@ -105,25 +122,30 @@ export default {
     span {
       padding-left: 4px;
     }
+
     .logo-wrapper {
       display: inline-block;
       margin: 10px 0;
+
       img {
         width: 1.4rem;
         display: inline-block;
         margin: 0 .6rem;
         cursor: pointer;
+
         &.unbind {
           -webkit-filter: grayscale(100%);
           -moz-filter: grayscale(100%);
           -o-filter: grayscale(100%);
           filter: grayscale(100%);
         }
+
         &.radius {
           border-radius: 50%;
         }
       }
     }
+
     .user-bio-section {
       font-size: 14px;
       padding: 15px 0;
@@ -135,5 +157,15 @@ export default {
         font-weight: bold;
       }
     }
+  }
+
+  .user-avatar img {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+  }
+
+  .hiddenInput {
+    display: none;
   }
 </style>

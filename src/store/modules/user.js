@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import {fileView} from '@/utils/file'
 import {removeAccessToken, removeRefreshToken, removeVuex} from '@/utils/auth'
 
 const getDefaultState = () => {
@@ -13,6 +14,7 @@ const state = getDefaultState()
 
 const mutations = {
   SET_USER_INFO: (state, userInfo) => {
+    userInfo.fileId && (userInfo.fileUrl = fileView(userInfo.fileId));
     state.userInfo = userInfo
   },
   SET_MENU_LIST: (state, menuList) => {
