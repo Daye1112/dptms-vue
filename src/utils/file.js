@@ -16,7 +16,7 @@ export function fileUpload(file) {
         resolve(response.data);
       })
       .catch(error => {
-        reject(error)
+        reject(error);
       })
   })
 }

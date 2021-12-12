@@ -42,6 +42,7 @@
 import {mapGetters} from 'vuex'
 import defaultAvatar from '@/assets/images/default_avatar.gif'
 import {fileUpload} from "@/utils/file"
+import store from '@/store'
 
 export default {
   name: "UserCard",
@@ -53,24 +54,30 @@ export default {
   },
   data() {
     return {
-      dialogVisible: false,
-      page: {
-        width: window.screen.width * 0.5,
-        height: window.screen.height * 0.5
-      }
+      userTemp: '',
     }
   },
   created() {
+    this.userTemp = JSON.parse(JSON.stringify(this.userInfo));
   },
   methods: {
     uploadHeadImg() {
       this.$el.querySelector('.hiddenInput').click();
     },
     handleFile(e) {
+      let _this = this;
       const $target = e.target || e.srcElement
       const file = $target.files[0]
       fileUpload(file).then(res => {
-        console.log(res);
+        _this.userTemp.fileId = res.id;
+        this.$request.post("/auth/activeUser/updateInfo", this.userTemp)
+          .then(response => {
+            store.dispatch('user/getInfo');
+            this.$message({
+              type: 'success',
+              message: '用户头像更新成功'
+            });
+          })
       });
     }
   }
