@@ -67,12 +67,12 @@ import defaultAvatar from '@/assets/images/default_avatar.gif'
 
 export default {
   name: "Main",
-  components: {defaultAvatar},
   data() {
     return {
       isRouterAlive: true,
       logoSrc: logo,
       activeRouter: '',
+      defaultAvatar: defaultAvatar
     }
   },
   computed: {

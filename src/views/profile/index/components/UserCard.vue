@@ -46,7 +46,6 @@ import store from '@/store'
 
 export default {
   name: "UserCard",
-  components: {defaultAvatar},
   computed: {
     ...mapGetters([
       'userInfo'
@@ -55,6 +54,7 @@ export default {
   data() {
     return {
       userTemp: '',
+      defaultAvatar: defaultAvatar
     }
   },
   created() {
