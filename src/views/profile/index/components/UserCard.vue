@@ -20,6 +20,19 @@
         <div class="user-role text-center text-muted">
           <span>{{ userInfo.username }}</span>
         </div>
+        <el-upload
+          class="upload-demo"
+          ref="upload"
+          :multiple="false"
+          action="void"
+          :http-request="customUpload"
+          :on-remove="handleRemove"
+          :on-progress="getProgress"
+          :file-list="fileList"
+          multiple
+          :auto-upload="true">
+          <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+        </el-upload>
       </div>
     </div>
     <div class="user-bio">
@@ -54,7 +67,8 @@ export default {
   data() {
     return {
       userTemp: '',
-      defaultAvatar: defaultAvatar
+      defaultAvatar: defaultAvatar,
+      fileList: []
     }
   },
   created() {
@@ -66,8 +80,8 @@ export default {
     },
     handleFile(e) {
       let _this = this;
-      const $target = e.target || e.srcElement
-      const file = $target.files[0]
+      const $target = e.target || e.srcElement;
+      const file = $target.files[0];
       fileUpload(file).then(res => {
         _this.userTemp.fileId = res.id;
         this.$request.post("/auth/activeUser/updateInfo", this.userTemp)
@@ -79,6 +93,21 @@ export default {
             });
           })
       });
+    },
+    customUpload(file) {
+      fileUpload(file.file, (progressEvent) => {
+        let num = progressEvent.loaded / progressEvent.total * 100 | 0;
+        num = num > 95 ? 95 : num;
+        file.onProgress({percent: num});
+      }).then(response => {
+        file.onSuccess();
+      })
+    },
+    getProgress() {
+
+    },
+    handleRemove() {
+
     }
   }
 }

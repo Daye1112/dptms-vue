@@ -4,14 +4,15 @@ const baseApi = process.env.VUE_APP_BASE_API;
 
 /**
  * 文件上传
- * @param file
+ * @param file 上传文件
+ * @param processFun 进度处理
  */
-export function fileUpload(file) {
+export function fileUpload(file, processFun = null) {
   return new Promise((resolve, reject) => {
     // 上传文件
-    let params = new FormData()
+    let params = new FormData();
     params.append('file', file, file.name);
-    request.upload("/file-manage/file/uploadFile", params)
+    request.upload("/file-manage/file/uploadFile", params, processFun)
       .then(response => {
         resolve(response.data);
       })

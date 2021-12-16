@@ -2,16 +2,16 @@ import axios from 'axios'
 import {Message} from 'element-ui'
 import {stringify} from 'qs'
 import router from '@/router'
-import {getRefreshToken, getAccessToken} from '@/utils/auth'
+import {getAccessToken, getRefreshToken} from '@/utils/auth'
 
-const baseApi = process.env.VUE_APP_BASE_API // '/auth/vCode'
+const baseApi = process.env.VUE_APP_BASE_API;
 
 // 自动转换data格式
 const service = axios.create({
   baseURL: baseApi,
   timeout: 10000,
   responseType: 'json'
-})
+});
 
 // 拦截处理
 service.interceptors.request.use(
@@ -28,29 +28,29 @@ service.interceptors.request.use(
   error => {
     return Promise.reject(error)
   }
-)
+);
 
 service.interceptors.response.use(
   response => {
     return response.data
   },
   async error => {
-    const {response} = error
-    const {code, message} = response.data
+    const {response} = error;
+    const {code, message} = response.data;
     if (code) {
       switch (code) {
         case 400:
-          Message.error(message || '业务处理异常')
-          break
+          Message.error(message || '业务处理异常');
+          break;
         case 401:
-          router.push('/login')
-          Message.error(message || '请先登陆')
-          break
+          router.push('/login');
+          Message.error(message || '请先登陆');
+          break;
         case 403:
-          Message.error(message || '权限不足')
+          Message.error(message || '权限不足');
           break;
         case 500:
-          Message.error(message || '服务异常')
+          Message.error(message || '服务异常');
           break;
       }
     } else {
@@ -58,7 +58,7 @@ service.interceptors.response.use(
     }
     return Promise.reject(error)
   }
-)
+);
 
 const request = {
   post(url, params) {
@@ -72,11 +72,11 @@ const request = {
     })
   },
   get(url, params) {
-    let _params
+    let _params;
     if (Object.is(params, undefined)) {
-      _params = ''
+      _params = '';
     } else {
-      _params = '?'
+      _params = '?';
       for (const key in params) {
         // eslint-disable-next-line no-prototype-builtins
         if (params.hasOwnProperty(key) && params[key] !== null && params[key] !== '') {
@@ -87,13 +87,16 @@ const request = {
     }
     return service.get(`${url}${_params}`)
   },
-  upload(url, params) {
+  upload(url, params, processFun = null) {
     return service.post(url, params, {
       headers: {
         'Content-Type': 'multipart/form-data'
+      },
+      onUploadProgress: (progressEvent) => {
+        processFun && processFun(progressEvent);
       }
     })
   }
-}
+};
 
 export default request
