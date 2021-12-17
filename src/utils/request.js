@@ -9,7 +9,7 @@ const baseApi = process.env.VUE_APP_BASE_API;
 // 自动转换data格式
 const service = axios.create({
   baseURL: baseApi,
-  timeout: 10000,
+  timeout: 180000,
   responseType: 'json'
 });
 

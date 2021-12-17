@@ -3,6 +3,7 @@ import authRouter from './modules/authRouter'
 import systemRouter from './modules/systemRouter'
 import monitorRouter from './modules/monitorRouter'
 import serviceRouter from './modules/serviceRouter'
+import fileRouter from './modules/fileRouter'
 
 export const constantRoutes = [
   {
@@ -49,6 +50,7 @@ export const constantRoutes = [
 export const asyncRoutes = [
   systemRouter,
   authRouter,
+  fileRouter,
   monitorRouter,
   serviceRouter
 ]
