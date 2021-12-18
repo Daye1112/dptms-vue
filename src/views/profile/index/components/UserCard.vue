@@ -20,19 +20,6 @@
         <div class="user-role text-center text-muted">
           <span>{{ userInfo.username }}</span>
         </div>
-        <!--<el-upload-->
-          <!--class="upload-demo"-->
-          <!--ref="upload"-->
-          <!--:multiple="false"-->
-          <!--action="void"-->
-          <!--:http-request="customUpload"-->
-          <!--:on-remove="handleRemove"-->
-          <!--:on-progress="getProgress"-->
-          <!--:file-list="fileList"-->
-          <!--multiple-->
-          <!--:auto-upload="true">-->
-          <!--<el-button slot="trigger" size="small" type="primary">选取文件</el-button>-->
-        <!--</el-upload>-->
       </div>
     </div>
     <div class="user-bio">
@@ -68,7 +55,6 @@ export default {
     return {
       userTemp: '',
       defaultAvatar: defaultAvatar,
-      // fileList: []
     }
   },
   created() {
@@ -94,22 +80,6 @@ export default {
           })
       });
     },
-    // customUpload(file) {
-    //   fileUpload(file.file, (progressEvent) => {
-    //     let num = progressEvent.loaded / progressEvent.total * 100 | 0;
-    //     num = num > 95 ? 95 : num;
-    //     file.onProgress({percent: num});
-    //   }).then(response => {
-    //     file.onProgress({percent: 100});
-    //     file.onSuccess();
-    //   })
-    // },
-    // getProgress() {
-    //
-    // },
-    // handleRemove() {
-    //
-    // }
   }
 }
 </script>

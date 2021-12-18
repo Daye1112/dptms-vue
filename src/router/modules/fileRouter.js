@@ -23,6 +23,6 @@ const fileRouter = {
       meta: {menuCode: 'FILE_CENTER_MANAGE', title: '文件中心', icon: 'fileCenter'}
     }
   ]
-}
+};
 
 export default fileRouter
