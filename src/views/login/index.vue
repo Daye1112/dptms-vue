@@ -1,67 +1,77 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on"
-             label-position="left">
+    <div class="login-main">
+      <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on"
+               label-position="left">
 
-      <div class="title-container">
-        <h3 class="title">注册登录DPTMS</h3>
-      </div>
+        <div class="title-container">
+          <h3 class="title">注册登录DPTMS</h3>
+        </div>
 
-      <el-form-item prop="username">
+        <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon-class="user"/>
         </span>
-        <el-input
-          ref="username"
-          v-model="loginForm.username"
-          placeholder="账号"
-          name="username"
-          type="text"
-          tabindex="1"
-          auto-complete="on"
-        />
-      </el-form-item>
+          <el-input
+            ref="username"
+            v-model="loginForm.username"
+            placeholder="账号"
+            name="username"
+            type="text"
+            tabindex="1"
+            auto-complete="on"
+          />
+        </el-form-item>
 
-      <el-form-item prop="password">
+        <el-form-item prop="password">
         <span class="svg-container">
           <svg-icon icon-class="password"/>
         </span>
-        <el-input
-          :key="passwordType"
-          ref="password"
-          v-model="loginForm.password"
-          :type="passwordType"
-          placeholder="密码"
-          name="password"
-          tabindex="2"
-          auto-complete="on"
-          @keyup.enter.native="handleLogin"
-        />
-        <span class="show-pwd" @click="showPwd">
+          <el-input
+            :key="passwordType"
+            ref="password"
+            v-model="loginForm.password"
+            :type="passwordType"
+            placeholder="密码"
+            name="password"
+            tabindex="2"
+            auto-complete="on"
+            @keyup.enter.native="handleLogin"
+          />
+          <span class="show-pwd" @click="showPwd">
           <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"/>
         </span>
-      </el-form-item>
+        </el-form-item>
 
-      <el-form-item prop="captchaCode" class="code-input">
+        <el-form-item prop="captchaCode" class="code-input">
         <span class="svg-container">
           <svg-icon icon-class="verify-code"/>
         </span>
-        <el-input
-          v-model="loginForm.captchaCode"
-          placeholder="验证码"
-          name="code"
-          type="text"
-          tabindex="3"
-          @keyup.enter.native="handleLogin"
-        />
-      </el-form-item>
-      <img :src="img" alt="" class="code-image" @click="getCaptcha">
+          <el-input
+            v-model="loginForm.captchaCode"
+            placeholder="验证码"
+            name="code"
+            type="text"
+            tabindex="3"
+            @keyup.enter.native="handleLogin"
+          />
+        </el-form-item>
+        <img :src="img" alt="" class="code-image" @click="getCaptcha">
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;"
-                 @click.native.prevent="handleLogin">登 录
-      </el-button>
+        <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;"
+                   @click.native.prevent="handleLogin">登 录
+        </el-button>
 
-    </el-form>
+      </el-form>
+    </div>
+    <div class="login-footer">
+      <small>
+        DPTMS-项目组管理系统 Copyright &copy; 2020-{{new Date().getFullYear()}} Mr.Darren
+      </small>
+      <small>
+        &nbsp;&nbsp;&nbsp;&nbsp;<a href="https://beian.miit.gov.cn" target="_blank">浙ICP备19032610号-1</a>
+      </small>
+    </div>
   </div>
 </template>
 
@@ -82,7 +92,7 @@ export default {
         captchaCode: '',
         captchaKey: ''
       },
-      img:'',
+      img: '',
       loginRules: {
         username: [{required: true, trigger: 'blur', message: '请输入用户名'}],
         password: [{required: true, trigger: 'blur', message: '请输入密码'}],
@@ -130,9 +140,9 @@ export default {
               this.$router.push({path: '/'})
             })
             .catch((error) => {
-            this.getCaptcha();
-            this.loading = false
-          })
+              this.getCaptcha();
+              this.loading = false
+            })
         }
       })
     }
@@ -145,4 +155,11 @@ export default {
 </style>
 <style lang="scss" scoped>
   @import "login-scoped";
+  .footer {
+    flex: 0;
+    text-align: center;
+    height: 30px !important;
+    line-height: 30px;
+    background: #f3f5f8;
+  }
 </style>

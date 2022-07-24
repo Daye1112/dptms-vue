@@ -3,8 +3,11 @@ import defaultSettings from '@/settings'
 const title = defaultSettings.title
 
 export default function getPageTitle(pageTitle) {
-  if (pageTitle) {
-    return `${pageTitle} - ${title}`
+  if (pageTitle === 'java技术学习网') {
+    return `${pageTitle}`;
   }
-  return `${title}`
+  if (pageTitle) {
+    return `${pageTitle} - ${title}`;
+  }
+  return `${title}`;
 }

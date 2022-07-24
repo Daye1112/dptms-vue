@@ -5,13 +5,13 @@ $light_gray: #fff;
 $cursor: #555;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
-  .login-container .el-input input {
+  .login-main .el-input input {
     font-size: 14px;
     color: $cursor;
   }
 }
 
-.login-container {
+.login-main {
   .el-input {
     display: inline-block;
     height: 47px;

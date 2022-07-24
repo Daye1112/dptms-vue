@@ -37,6 +37,7 @@ export const constantRoutes = [
     path: '/login',
     name: 'login',
     component: (resolve) => require(['@/views/login'], resolve),
+    meta: {title: 'java技术学习网'},
     hidden: true
   },
   {
