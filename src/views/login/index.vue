@@ -69,7 +69,7 @@
         DPTMS-项目组管理系统 Copyright &copy; 2020-{{new Date().getFullYear()}} Mr.Darren
       </small>
       <small>
-        &nbsp;&nbsp;&nbsp;&nbsp;<a href="https://beian.miit.gov.cn" target="_blank">浙ICP备19032610号-1</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;<a href="https://beian.miit.gov.cn" target="_blank">浙ICP备19032610号-2</a>
       </small>
     </div>
   </div>
