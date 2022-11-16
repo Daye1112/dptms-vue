@@ -88,7 +88,7 @@ export default {
       loginForm: {
         username: '',
         password: '',
-        loginType: 1,
+        authType: 1,
         captchaCode: '',
         captchaKey: ''
       },
