@@ -4,6 +4,7 @@ import systemRouter from './modules/systemRouter'
 import monitorRouter from './modules/monitorRouter'
 import serviceRouter from './modules/serviceRouter'
 import fileRouter from './modules/fileRouter'
+import {apiDocRouter, sbaRouter} from './modules/extRouter'
 
 export const constantRoutes = [
   {
@@ -27,7 +28,7 @@ export const constantRoutes = [
             path: 'index',
             name: 'profile',
             component: (resolve) => require(['@/views/profile/index'], resolve),
-            meta: { title: '个人中心' }
+            meta: {title: '个人中心'}
           }
         ]
       }
@@ -53,5 +54,7 @@ export const asyncRoutes = [
   authRouter,
   fileRouter,
   monitorRouter,
-  serviceRouter
+  serviceRouter,
+  apiDocRouter,
+  sbaRouter
 ]

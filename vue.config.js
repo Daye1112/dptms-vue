@@ -4,6 +4,7 @@ const defaultSettings = require('./src/settings.js')
 
 const baseApi = process.env.VUE_APP_BASE_API
 const baseUrl = process.env.VUE_APP_BASE_URL
+
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
@@ -41,7 +42,7 @@ module.exports = {
     proxy: {
       [baseApi]: {
         target: baseUrl,
-        pathRewrite: { ['^' + baseApi]: '' }
+        pathRewrite: {['^' + baseApi]: ''}
       }
     }
   },

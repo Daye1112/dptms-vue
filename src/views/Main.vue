@@ -17,13 +17,29 @@
               <span>DPTMS-项目组管理系统</span>
             </div>
             <template v-if="mainChildrenRoutes && mainChildrenRoutes.length > 0">
-              <template v-for="item in mainChildrenRoutes">
-                <template v-if="!item.hidden">
+              <template v-for="(item, index) in mainChildrenRoutes">
+                <template v-if="!item.hidden && index < 5">
                   <el-menu-item :index="item.name">
                     <svg-icon :icon-class="item.meta && item.meta.icon"/>
                     {{item.meta && item.meta.title}}
                   </el-menu-item>
                 </template>
+              </template>
+              <template v-if="mainChildrenRoutes.length > 5">
+                <el-submenu index="2">
+                  <template slot="title">
+                    <svg-icon icon-class="ext"/>
+                    扩展功能
+                  </template>
+                  <template v-for="(item, index) in mainChildrenRoutes">
+                    <template v-if="!item.hidden && index >= 5">
+                      <el-menu-item :index="item.name">
+                        <svg-icon :icon-class="item.meta && item.meta.icon"/>
+                        {{item.meta && item.meta.title}}
+                      </el-menu-item>
+                    </template>
+                  </template>
+                </el-submenu>
               </template>
             </template>
           </el-menu>
