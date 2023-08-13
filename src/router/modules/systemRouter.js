@@ -22,6 +22,12 @@ const systemRouter = {
       component: (resolve) => require(['@/views/system/cache'], resolve),
       meta: {menuCode: 'SYS_CACHE_MANAGE', title: '缓存管理', icon: 'cache'}
     },
+    {
+      path: 'projectInfo',
+      name: 'projectInfo',
+      component: (resolve) => require(['@/views/system/project'], resolve),
+      meta: {menuCode: 'SYS_PROJECT_MANAGE', title: '项目管理', icon: 'project'}
+    },
   ]
 };
 
