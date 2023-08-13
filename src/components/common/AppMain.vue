@@ -8,7 +8,7 @@
       </div>
     </el-main>
     <el-footer class="footer">
-      <small>DPTMS-项目组管理系统 Copyright &copy; 2020-{{new Date().getFullYear()}} 陆宇豪</small>
+      <small>拂晓·项目组管理系统 Copyright &copy; 2020-{{new Date().getFullYear()}} 陆宇豪</small>
     </el-footer>
   </el-container>
 </template>

@@ -14,7 +14,7 @@
             active-text-color="#ffd04b">
             <div class="top-logo" @click="goTo('home')">
               <svg-icon icon-class="monitor" class-name="icon"/>
-              <span>DPTMS-项目组管理系统</span>
+              <span>拂晓·项目组管理系统</span>
             </div>
             <template v-if="mainChildrenRoutes && mainChildrenRoutes.length > 0">
               <template v-for="(item, index) in mainChildrenRoutes">

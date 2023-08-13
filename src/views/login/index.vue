@@ -66,7 +66,7 @@
     </div>
     <div class="login-footer">
       <small>
-        DPTMS-项目组管理系统 Copyright &copy; 2020-{{new Date().getFullYear()}} 陆宇豪
+        拂晓·项目组管理系统 Copyright &copy; 2020-{{new Date().getFullYear()}} 陆宇豪
       </small>
       <small>
         &nbsp;&nbsp;&nbsp;&nbsp;<a href="https://beian.miit.gov.cn" target="_blank">浙ICP备19032610号-2</a>
