@@ -22,7 +22,30 @@ export function fileUpload(file, processFun = null) {
   })
 }
 
-export function fileDownload(fileId) {
+export function fileDownload(fileId, fileName) {
+  let a = document.createElement('a')
+  a.download = fileName
+  a.style.display = 'none'
+  a.href = baseApi + '/file-manage/file/download' + '?fileId=' + fileId;
+  document.body.appendChild(a)
+  // 触发点击
+  a.click()
+  // 然后移除
+  document.body.removeChild(a)
+}
+
+export function fileDownloadBlob(data, fileName) {
+  let url = window.URL.createObjectURL(new Blob([data]));
+  let a = document.createElement('a')
+  a.download = fileName
+  a.style.display = 'none'
+  a.href = url
+  document.body.appendChild(a)
+  // 触发点击
+  a.click();
+  window.URL.revokeObjectURL(a.href);
+  // 然后移除
+  document.body.removeChild(a)
 }
 
 /**
@@ -30,5 +53,9 @@ export function fileDownload(fileId) {
  * @param fileId 文件id
  */
 export function fileView(fileId) {
-  return baseApi + "/file-manage/file/view?fileId=" + fileId;
+  window.open(
+    baseApi + '/file-manage/file/view?fileId=' + fileId,
+    '_blank'
+  );
+  // return baseApi + "/file-manage/file/view?fileId=" + fileId;
 }

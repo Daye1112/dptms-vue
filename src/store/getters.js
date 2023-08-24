@@ -4,9 +4,9 @@ const getters = {
   userInfo: state => state.user.userInfo,
   menuList: state => state.user.menuList,
   menuCodeList: state => state.user.menuCodeList,
+  orgList: state => state.user.orgList,
   allRoutes: state => state.permission.allRoutes,
   mainRoutes: state => state.permission.mainRoutes,
-  mainChildrenRoutes: state => state.permission.mainChildrenRoutes,
-  orgId: state => state.organization.orgId
+  mainChildrenRoutes: state => state.permission.mainChildrenRoutes
 }
 export default getters

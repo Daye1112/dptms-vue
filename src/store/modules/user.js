@@ -6,7 +6,8 @@ const getDefaultState = () => {
   return {
     userInfo: '',
     menuList: [],
-    menuCodeList: []
+    menuCodeList: [],
+    orgList: []
   }
 }
 
@@ -22,6 +23,9 @@ const mutations = {
   },
   SET_MENU_CODE_LIST: (state, menuCodeList) => {
     state.menuCodeList = menuCodeList;
+  },
+  SET_ORG_LIST: (state, orgList) => {
+    state.orgList = orgList;
   },
   RESET_STATE: (state) => {
     Object.assign(state, getDefaultState());
@@ -68,6 +72,20 @@ const actions = {
           // 获取用户的菜单权限
           commit('SET_MENU_LIST', menuList);
           commit('SET_MENU_CODE_LIST', menuCodeList);
+          resolve(data);
+        })
+        .catch(error => {
+          reject(error)
+        })
+    })
+  },
+  getOrgList({commit}) {
+    return new Promise((resolve, reject) => {
+      request.get("/auth/activeUser/listOrg")
+        .then(response => {
+          const {data} = response;
+          data.unshift({id: 0, orgName: '默认组织'});
+          commit('SET_ORG_LIST', data);
           resolve(data);
         })
         .catch(error => {

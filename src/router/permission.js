@@ -34,7 +34,8 @@ router.beforeEach(async (to, from, next) => {
           // 获取用户信息
           await Promise.all([
             store.dispatch('user/getInfo'),
-            store.dispatch('user/getMenuList')
+            store.dispatch('user/getMenuList'),
+            store.dispatch('user/getOrgList')
           ]);
           const menuCodeList = store.getters.menuCodeList;
           // 生成路由

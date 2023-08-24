@@ -2,6 +2,7 @@ import Cookies from 'js-cookie'
 
 const tokenKey = 'DptmsAccessToken'
 const refreshTokenKey = 'DptmsRefreshToken'
+const currentOrgId = 'currentOrgId'
 
 export function getAccessToken() {
   return Cookies.get(tokenKey)
@@ -17,6 +18,14 @@ export function getRefreshToken() {
 
 export function removeRefreshToken() {
   return Cookies.remove(refreshTokenKey)
+}
+
+export function getCurrentOrgId() {
+  return window.localStorage.getItem(currentOrgId) || '0';
+}
+
+export function setCurrentOrgId(orgId) {
+  window.localStorage.setItem(currentOrgId, orgId);
 }
 
 export function removeVuex() {

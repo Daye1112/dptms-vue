@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: '拂晓·项目组管理系统',
+  title: 'DPTMS管理系统',
 
   /**
    * @type {boolean} true | false

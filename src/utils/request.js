@@ -60,6 +60,27 @@ service.interceptors.response.use(
   }
 );
 
+/**
+ * 组装参数
+ * @param params
+ * @returns {string}
+ */
+function buildParam(params) {
+  let _params;
+  if (Object.is(params, undefined)) {
+    _params = '';
+  } else {
+    _params = '?';
+    for (const key in params) {
+      if (params.hasOwnProperty(key) && params[key] !== null && params[key] !== '') {
+        _params += `${key}=${params[key]}&`
+      }
+    }
+    _params = _params.substring(0, _params.length - 1);
+  }
+  return _params;
+}
+
 const request = {
   post(url, params) {
     return service.post(url, params, {
@@ -72,19 +93,7 @@ const request = {
     })
   },
   get(url, params) {
-    let _params;
-    if (Object.is(params, undefined)) {
-      _params = '';
-    } else {
-      _params = '?';
-      for (const key in params) {
-        // eslint-disable-next-line no-prototype-builtins
-        if (params.hasOwnProperty(key) && params[key] !== null && params[key] !== '') {
-          _params += `${key}=${params[key]}&`
-        }
-      }
-      _params = _params.substring(0, _params.length - 1);
-    }
+    let _params = buildParam(params);
     return service.get(`${url}${_params}`)
   },
   upload(url, params, processFun = null) {
@@ -93,6 +102,15 @@ const request = {
         'Content-Type': 'multipart/form-data'
       },
       onUploadProgress: (progressEvent) => {
+        processFun && processFun(progressEvent);
+      }
+    })
+  },
+  download(url, params, processFun = null) {
+    let _params = buildParam(params);
+    return service.get(`${url}${_params}`, {
+      responseType: 'blob',
+      onDownloadProgress: (progressEvent) => {
         processFun && processFun(progressEvent);
       }
     })

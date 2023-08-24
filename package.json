@@ -1,7 +1,7 @@
 {
   "name": "dptms-vue",
   "version": "1.0.0",
-  "description": "Dawn project team management system——拂晓·项目组管理系统前端(VUE版)",
+  "description": "Dawn project team management system——DPTMS管理系统前端(VUE版)",
   "author": "Mr.Darren",
   "license": "Apache 2.0",
   "scripts": {

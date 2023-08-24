@@ -14,7 +14,7 @@
             active-text-color="#ffd04b">
             <div class="top-logo" @click="goTo('home')">
               <svg-icon icon-class="monitor" class-name="icon"/>
-              <span>拂晓·项目组管理系统</span>
+              <span>DPTMS管理系统</span>
             </div>
             <template v-if="mainChildrenRoutes && mainChildrenRoutes.length > 0">
               <template v-for="(item, index) in mainChildrenRoutes">
@@ -44,7 +44,19 @@
             </template>
           </el-menu>
         </el-col>
-        <el-col :span="4" class="right-menu">
+        <el-col :span="2" class="right-menu">
+          <el-select v-model="currentOrgId"
+                     size="mini" class="org-select"
+                     placeholder="请选择组织" @change="updateOrgId">
+            <el-option
+              v-for="item in orgList"
+              :key="item.id + ''"
+              :label="item.orgName"
+              :value="item.id + ''">
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="2" class="right-menu">
           <el-dropdown trigger="click" class="dropdown">
             <div class="user-avatar">
               <img :src="userInfo.fileUrl ? userInfo.fileUrl : defaultAvatar"/>
@@ -80,6 +92,7 @@
 import {mapGetters} from 'vuex'
 import logo from '@/assets/images/logo.png'
 import defaultAvatar from '@/assets/images/default_avatar.gif'
+import {getCurrentOrgId, setCurrentOrgId} from '@/utils/auth'
 
 export default {
   name: "Main",
@@ -88,13 +101,15 @@ export default {
       isRouterAlive: true,
       logoSrc: logo,
       activeRouter: '',
-      defaultAvatar: defaultAvatar
+      defaultAvatar: defaultAvatar,
+      currentOrgId: ''
     }
   },
   computed: {
     ...mapGetters([
       'mainChildrenRoutes',
-      'userInfo'
+      'userInfo',
+      'orgList'
     ]),
     key() {
       return this.$route.path;
@@ -102,6 +117,7 @@ export default {
   },
   created() {
     this.activerouter = this.$route.matched[1].name;
+    this.currentOrgId = getCurrentOrgId();
   },
   methods: {
     handleSelect(key, keyPath) {
@@ -110,6 +126,11 @@ export default {
     goTo(name) {
       this.activerouter = name;
       this.$router.push({name: name});
+    },
+    // 更新当前组织id
+    updateOrgId() {
+      setCurrentOrgId(this.currentOrgId);
+      location.reload();
     },
     async logout() {
       await this.$store.dispatch('user/logout');
@@ -148,6 +169,12 @@ export default {
     height: 61px;
     background: #545c64;
     text-align: right;
+
+    .org-select /deep/ .el-input .el-input__inner {
+      color: rgb(224, 224, 224);
+      background-color: rgb(84, 92, 100);
+      border-color: #909399;
+    }
 
     .dropdown {
       height: 61px;

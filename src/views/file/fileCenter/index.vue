@@ -8,18 +8,12 @@
                  type="primary" icon="el-icon-search" @click="handleFilter">
         查询
       </el-button>
-      <!--<el-button round size="small" class="filter-item fr"-->
-      <!--type="danger" icon="el-icon-delete"-->
-      <!--v-permission="['SYS_USER_ADD']"-->
-      <!--@click="">-->
-      <!--删除-->
-      <!--</el-button>-->
-      <!--<el-button round size="small" class="filter-item fr"-->
-      <!--type="info" icon="el-icon-upload"-->
-      <!--v-permission="['SYS_USER_ADD']"-->
-      <!--@click="handleFileUploadList">-->
-      <!--上传列表-->
-      <!--</el-button>-->
+      <el-button round size="small" class="filter-item"
+                 v-if="this.filePath.length > 1"
+                 type="primary" @click="returnLast">
+        <svg-icon icon-class="goBack"/>
+        返回上级
+      </el-button>
       <el-button round size="small" class="filter-item fr"
                  type="success" icon="el-icon-folder-add"
                  v-permission="['FILE_CENTER_INSERT']"
@@ -52,9 +46,7 @@
       size="mini"
       class="file-table"
       :height="tableHeight"
-      @row-contextmenu="rightClick"
       @row-dblclick="handleDbclick"
-      @selection-change="handleSelectionChange"
     >
       <el-table-column
         class="table-selection-cell"
@@ -113,9 +105,17 @@
         </template>
       </el-table-column>
     </el-table>
-    <div class="file-upload-list" v-show="showFileUploadList">
-      1111
-    </div>
+    <el-dialog
+      v-el-drag-dialog
+      :title="uploadTextMap[fileUploadStatus]"
+      class="file-upload-process"
+      :visible.sync="fileUploadVisible"
+      width="30%"
+    >
+      <el-progress :text-inside="true"
+                   :stroke-width="26"
+                   :percentage="fileUploadPercent"/>
+    </el-dialog>
     <el-dialog
       v-el-drag-dialog
       :title="textMap[dialogStatus]"
@@ -154,7 +154,7 @@ import Pagination from '@/components/Pagination'
 import elDragDialog from '@/directive/el-drag-dialog'
 import waves from '@/directive/waves'
 import PopTransfer from '@/components/PopTransfer'
-import {fileUpload} from "@/utils/file"
+import {fileDownloadBlob, fileUpload, fileView} from "@/utils/file"
 
 export default {
   name: "FileCenter",
@@ -167,18 +167,16 @@ export default {
   },
   data() {
     return {
-      baseApi: process.env.VUE_APP_BASE_API,
       listQuery: {
         fileName: '',
-        parentId: 0,
-        filePath: ['0']
+        parentId: 0
       },
-      uploadFileList: [],
+      filePath: [0],
+      lastParentId: 0,
       listLoading: false,
       fileList: [],
       currentRowData: {},
       multipleSelection: [],
-      showFileUploadList: false,
       temp: {
         orgId: '',
         fileName: '',
@@ -199,6 +197,13 @@ export default {
       rules: {
         fileName: [{required: true, message: '请输入应用编号', trigger: 'blur'}]
       },
+      fileUploadVisible: false,
+      fileUploadStatus: '',
+      uploadTextMap: {
+        upload: '上传进度',
+        download: '下载进度'
+      },
+      fileUploadPercent: 0
     }
   },
   created() {
@@ -221,18 +226,20 @@ export default {
       Object.getOwnPropertyNames(this.temp).forEach(function (key) {
         _this.temp[key] = '';
       });
-      this.uploadFileList.push(file);
+      this.fileUploadPercent = 0;
+      this.fileUploadVisible = true;
+      this.fileUploadStatus = 'upload';
       fileUpload(file.file, (progressEvent) => {
         let num = progressEvent.loaded / progressEvent.total * 100 | 0;
-        num = num > 95 ? 95 : num;
-        file.process = num;
+        this.fileUploadPercent = num > 95 ? 95 : num;
+        file.process = this.fileUploadPercent;
       }).then(response => {
         let fileInfo = response;
         _this.temp.orgId = 1;
         _this.temp.fileName = fileInfo.fileName;
         _this.temp.fileType = 1;
         _this.temp.fileParentId = _this.listQuery.parentId;
-        _this.temp.fileParentPath = _this.listQuery.filePath.join("/");
+        _this.temp.fileParentPath = _this.filePath.join("/");
         _this.temp.fileId = fileInfo.id;
         _this.$request.post("/file-manage/fileCenter/insert", _this.temp)
           .then(response => {
@@ -242,6 +249,8 @@ export default {
             })
             _this.listPage();
             file.process = 100;
+            this.fileUploadPercent = 100;
+            this.fileUploadVisible = false;
           })
       });
     },
@@ -254,7 +263,7 @@ export default {
       this.temp.orgId = 1;
       this.temp.fileType = 2;
       this.temp.fileParentId = this.listQuery.parentId;
-      this.temp.fileParentPath = this.listQuery.filePath.join("/");
+      this.temp.fileParentPath = this.filePath.join("/");
       this.dialogStatus = 'create';
       this.dialogFormVisible = true;
       this.$nextTick(() => {
@@ -320,58 +329,52 @@ export default {
     },
     // 下载文件
     downloadFile(row) {
-      let a = document.createElement('a')
-      a.download = row.fileName
-      a.style.display = 'none'
-      const fileUrl = this.baseApi + '/file-manage/file/download' + '?fileId=' + row.fileId
-      a.href = fileUrl
-      document.body.appendChild(a)
-      a.click() // 触发点击
-      document.body.removeChild(a) // 然后移除
+      this.fileUploadPercent = 0;
+      this.fileUploadStatus = 'download';
+      this.fileUploadVisible = true;
+      this.$request.download('/file-manage/file/download', {fileId: row.fileId}, (progressEvent) => {
+        let num = progressEvent.loaded / progressEvent.total * 100 | 0;
+        this.fileUploadPercent = num > 95 ? 95 : num;
+      }).then(response => {
+        fileDownloadBlob(response, row.fileName);
+        this.fileUploadPercent = 100;
+        this.fileUploadVisible = false;
+      }).catch(() => {
+
+      })
     },
     // 预览文件
     viewFile(row) {
-      window.open(
-        this.baseApi + '/file-manage/file/view' + '?fileId=' + row.fileId,
-        '_blank'
-      );
-    },
-    handleFileUploadList() {
-      this.showFileUploadList = !this.showFileUploadList;
-    },
-    // 右键事件
-    rightClick(row, column, event) {
-      this.currentRowData = row;
+      fileView(row.fileId);
     },
     // 监听行双击事件
     handleDbclick(row, column, event) {
-      // const { fileType, fileId, fileName } = row;
-      // // 1. 判断是否是文件夹
-      // if (fileType === 2) {
-      //   // 2. 是，进入文件夹
-      //   this.fileParentId = fileId;
-      //   this.getFileList()
-      //     .then(() => {
-      //       // 3. 添加导航
-      //       this.navList.push({ fileId, fileName })
-      //     })
-      // }
+      const {id, fileType} = row;
+      // 判断是否是文件夹
+      if (fileType === 2) {
+        this.lastParentId = this.listQuery.parentId;
+        this.filePath.push(id);
+        this.listQuery.parentId = id;
+        this.listPage();
+      }
     },
-    // 行选择事件
-    handleSelectionChange(val) {
-      this.multipleSelection = val
-    },
+    // 返回上级
+    returnLast() {
+      if (this.filePath.length === 1) {
+        return;
+      }
+      this.filePath.pop();
+      let filePathLength = this.filePath.length;
+      this.listQuery.parentId = this.filePath[filePathLength - 1];
+      this.lastParentId = this.filePath[filePathLength === 1 ? filePathLength - 1 : filePathLength - 2];
+      this.listPage();
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-  .file-upload-list {
-    width: 600px;
-    position: absolute;
-    border: 1px solid #f0f0f0;
-    box-shadow: 4px -4px 13px 0 rgb(213, 217, 220);
-    border-radius: 2px;
-    z-index: 120;
+  .file-upload-process /deep/ .el-progress-bar__innerText {
+    color: black;
   }
 </style>
