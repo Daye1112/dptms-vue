@@ -178,7 +178,6 @@ export default {
       currentRowData: {},
       multipleSelection: [],
       temp: {
-        orgId: '',
         fileName: '',
         fileDesc: '',
         fileType: '',
@@ -235,7 +234,6 @@ export default {
         file.process = this.fileUploadPercent;
       }).then(response => {
         let fileInfo = response;
-        _this.temp.orgId = 1;
         _this.temp.fileName = fileInfo.fileName;
         _this.temp.fileType = 1;
         _this.temp.fileParentId = _this.listQuery.parentId;
@@ -259,8 +257,6 @@ export default {
       Object.getOwnPropertyNames(this.temp).forEach(function (key) {
         _this.temp[key] = '';
       });
-      // 当前组织id
-      this.temp.orgId = 1;
       this.temp.fileType = 2;
       this.temp.fileParentId = this.listQuery.parentId;
       this.temp.fileParentPath = this.filePath.join("/");

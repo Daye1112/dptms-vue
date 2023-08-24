@@ -2,7 +2,7 @@ import axios from 'axios'
 import {Message} from 'element-ui'
 import {stringify} from 'qs'
 import router from '@/router'
-import {getAccessToken, getRefreshToken} from '@/utils/auth'
+import {getAccessToken, getCurrentOrgId, getRefreshToken} from '@/utils/auth'
 
 const baseApi = process.env.VUE_APP_BASE_API;
 
@@ -22,6 +22,21 @@ service.interceptors.request.use(
       // 添加token
       config.headers['DptmsAccessToken'] = accessToken;
       config.headers['DptmsRefreshToken'] = refreshToken;
+    }
+
+    let orgId = getCurrentOrgId();
+    if (config.headers['Content-Type'] === 'multipart/form-data') {
+      config.data.set('orgId', orgId);
+    } else if (config.method === 'post') {
+      config.data = {
+        orgId: orgId,
+        ...config.data
+      }
+    } else if (config.method === 'get') {
+      config.params = {
+        orgId: orgId,
+        ...config.params
+      }
     }
     return config;
   },

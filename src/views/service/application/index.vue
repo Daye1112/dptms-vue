@@ -135,7 +135,6 @@ export default {
       },
       temp: {
         id: '',
-        orgId: '',
         appCode: '',
         appName: '',
         appType: ''
@@ -184,8 +183,6 @@ export default {
       Object.getOwnPropertyNames(this.temp).forEach(function (key) {
         _this.temp[key] = '';
       });
-      // 当前组织id
-      this.temp.orgId = 1;
       this.dialogStatus = 'create';
       this.dialogFormVisible = true;
       this.$nextTick(() => {
