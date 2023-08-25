@@ -53,14 +53,17 @@
         type="selection"
         width="55"
       />
-      <el-table-column label="文件名" prop="fileName" min-width="150" align="center">
+      <el-table-column label="文件名" prop="fileName" min-width="150" align="left">
         <template slot-scope="{row}">
+          <svg-icon :icon-class="row.fileType === 1 ? 'otherFile' : 'folder'"/>
           <span>{{row.fileName}}</span>
         </template>
       </el-table-column>
       <el-table-column label="类型" prop="fileType" min-width="60" align="center">
         <template slot-scope="{row}">
-          <span>{{row.fileType === 1 ? '文件' : '文件夹'}}</span>
+          <el-tag :type="row.fileType === 1 ? '' : 'warning'">
+            <span>{{row.fileType === 1 ? '文件' : '文件夹'}}</span>
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column label="大小" prop="fileSize" min-width="60" align="center">
